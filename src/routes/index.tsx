@@ -12,7 +12,8 @@ import {
   Sparkles,
 } from "lucide-react";
 import { SiteLayout } from "@/components/SiteLayout";
-import heroImg from "@/assets/hero-clinic.jpg";
+import heroAsset from "@/assets/fachada-filipinho.jpg.asset.json";
+const heroImg = heroAsset.url;
 
 export const Route = createFileRoute("/")({
   component: Home,
