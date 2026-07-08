@@ -57,7 +57,7 @@ const PROCEDIMENTOS = [
 const EXAMES = [
   { icon: Zap, name: "Eletroencefalograma" },
   { icon: HeartPulse, name: "Eletrocardiograma" },
-  { icon: ScanLine, name: "Ecocardiograma" },
+  { icon: ScanLine, name: "Ecodopplercardiograma" },
   { icon: Activity, name: "Holter" },
   { icon: Radio, name: "MAPA" },
   { icon: TestTube, name: "Ultrassonografia" },
