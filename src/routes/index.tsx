@@ -19,7 +19,7 @@ export const Route = createFileRoute("/")({
   component: Home,
   head: () => ({
     meta: [
-      { property: "og:image", content: "https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=1200" },
+      { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/6a8vCQujcrhCjyT3wWnZnZokVAz2/social-images/social-1783520718076-imagem_ce_filipinho.webp" },
     ],
   }),
 });
