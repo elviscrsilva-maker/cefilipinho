@@ -215,9 +215,9 @@ function Toast({ text }: { text: string | null }) {
 }
 
 /* ---------- content section hook ---------- */
-function useContentSection<T>(key: string, fallback: T) {
+function useContentSection<T extends Record<string, any>>(key: string, fallback: T) {
   const qc = useQueryClient();
-  const query = useQuery({
+  const query = useQuery<T>({
     queryKey: ["admin_content", key],
     queryFn: async (): Promise<T> => {
       const { data } = await supabase
@@ -237,7 +237,7 @@ function useContentSection<T>(key: string, fallback: T) {
     qc.invalidateQueries({ queryKey: ["admin_content", key] });
     qc.invalidateQueries({ queryKey: ["content", key] });
   };
-  return { ...query, save };
+  return { data: (query.data ?? fallback) as T, save };
 }
 
 /* ---------- HOME ---------- */
