@@ -13,7 +13,7 @@ import {
 } from "lucide-react";
 import { SiteLayout } from "@/components/SiteLayout";
 import heroAsset from "@/assets/fachada-filipinho.jpg.asset.json";
-const heroImg = heroAsset.url;
+import { useHomeContent, useInstitutionalContent, useContactContent } from "@/lib/content";
 
 export const Route = createFileRoute("/")({
   component: Home,
