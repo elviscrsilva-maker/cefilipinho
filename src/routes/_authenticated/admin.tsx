@@ -243,7 +243,7 @@ function useContentSection<T>(key: string, fallback: T) {
 /* ---------- HOME ---------- */
 function HomeEditor() {
   const { data, save } = useContentSection<HomeContent>("home", DEFAULTS.home);
-  const [form, setForm] = useState<HomeContent>(data);
+  const [form, setForm] = useState<HomeContent>(data ?? DEFAULTS.home);
   const [saving, setSaving] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
   useEffect(() => setForm(data), [data]);
