@@ -1,7 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { SiteLayout } from "@/components/SiteLayout";
-import { MapPin, Phone, Mail, Clock, Send } from "lucide-react";
+import { MapPin, Phone, Mail, Clock, Send, MessageCircle } from "lucide-react";
 import { useState } from "react";
+import { useContactContent } from "@/lib/content";
 
 const TITLE = "Contato — Centro de Especialidades Filipinho";
 const DESC =
