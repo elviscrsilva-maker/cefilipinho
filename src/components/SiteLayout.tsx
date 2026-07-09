@@ -1,6 +1,8 @@
 import { Link } from "@tanstack/react-router";
 import { Mail, MapPin, Phone, Clock, Menu, X } from "lucide-react";
 import { useState, type ReactNode } from "react";
+import logoFilipinhoAsset from "@/assets/logo-filipinho.png.asset.json";
+import logoElvisAsset from "@/assets/logo-elvis.jpeg.asset.json";
 
 const NAV = [
   { to: "/", label: "Início" },
@@ -18,17 +20,11 @@ export function SiteLayout({ children }: { children: ReactNode }) {
       <header className="sticky top-0 z-40 border-b border-border bg-background/85 backdrop-blur-md">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           <Link to="/" className="flex items-center gap-3 group">
-            <div className="h-10 w-10 rounded-lg bg-gradient-primary grid place-items-center text-primary-foreground font-display font-bold shadow-card">
-              CF
-            </div>
-            <div className="leading-tight">
-              <div className="font-display text-primary font-semibold text-sm sm:text-base">
-                Centro de Especialidades
-              </div>
-              <div className="text-[11px] uppercase tracking-widest text-muted-foreground">
-                Filipinho
-              </div>
-            </div>
+            <img
+              src={logoFilipinhoAsset.url}
+              alt="Centro de Especialidades Filipinho"
+              className="h-11 sm:h-12 w-auto"
+            />
           </Link>
           <nav className="hidden lg:flex items-center gap-1">
             {NAV.map((n) => (
@@ -118,9 +114,20 @@ export function SiteLayout({ children }: { children: ReactNode }) {
           </div>
         </div>
         <div className="border-t border-primary-foreground/15">
-          <div className="mx-auto max-w-7xl px-4 py-5 text-xs text-primary-foreground/70 flex flex-wrap justify-between gap-2">
-            <span>© {new Date().getFullYear()} Centro de Especialidades Filipinho — SEMUS São Luís</span>
-            <span>Todos os direitos reservados.</span>
+          <div className="mx-auto max-w-7xl px-4 py-5 text-xs text-primary-foreground/70 flex flex-wrap items-center justify-between gap-4">
+            <span>© {new Date().getFullYear()} Centro de Especialidades Filipinho — SEMUS São Luís · Todos os direitos reservados.</span>
+            <a
+              href="#"
+              className="flex items-center gap-2 text-primary-foreground/80 hover:text-primary-foreground transition"
+              aria-label="Desenvolvido por Elvis C. R. Silva"
+            >
+              <span className="hidden sm:inline text-[11px] uppercase tracking-widest">Desenvolvido por</span>
+              <img
+                src={logoElvisAsset.url}
+                alt="Elvis C. R. Silva"
+                className="h-9 w-auto rounded-md bg-primary-foreground/5 p-1"
+              />
+            </a>
           </div>
         </div>
       </footer>
