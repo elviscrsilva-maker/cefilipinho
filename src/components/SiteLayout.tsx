@@ -1,6 +1,8 @@
 import { Link } from "@tanstack/react-router";
 import { Mail, MapPin, Phone, Clock, Menu, X } from "lucide-react";
 import { useState, type ReactNode } from "react";
+import logoFilipinhoAsset from "@/assets/logo-filipinho.png.asset.json";
+import logoElvisAsset from "@/assets/logo-elvis.jpeg.asset.json";
 
 const NAV = [
   { to: "/", label: "Início" },
