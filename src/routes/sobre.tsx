@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { SiteLayout } from "@/components/SiteLayout";
 import { Building2, Target, Eye, Heart, Award } from "lucide-react";
+import { useInstitutionalContent, useContactContent, useBrandingContent } from "@/lib/content";
 
 const TITLE = "Institucional — Centro de Especialidades Filipinho";
 const DESC =
