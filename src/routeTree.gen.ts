@@ -15,6 +15,7 @@ import { Route as PodcastRouteImport } from './routes/podcast'
 import { Route as MidiaRouteImport } from './routes/midia'
 import { Route as EspecialidadesRouteImport } from './routes/especialidades'
 import { Route as ContatoRouteImport } from './routes/contato'
+import { Route as AuthRouteImport } from './routes/auth'
 import { Route as IndexRouteImport } from './routes/index'
 
 const SobreRoute = SobreRouteImport.update({
@@ -47,6 +48,11 @@ const ContatoRoute = ContatoRouteImport.update({
   path: '/contato',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -55,6 +61,7 @@ const IndexRoute = IndexRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
   '/contato': typeof ContatoRoute
   '/especialidades': typeof EspecialidadesRoute
   '/midia': typeof MidiaRoute
@@ -64,6 +71,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
   '/contato': typeof ContatoRoute
   '/especialidades': typeof EspecialidadesRoute
   '/midia': typeof MidiaRoute
@@ -74,6 +82,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
   '/contato': typeof ContatoRoute
   '/especialidades': typeof EspecialidadesRoute
   '/midia': typeof MidiaRoute
@@ -85,6 +94,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/auth'
     | '/contato'
     | '/especialidades'
     | '/midia'
@@ -94,6 +104,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/auth'
     | '/contato'
     | '/especialidades'
     | '/midia'
@@ -103,6 +114,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/auth'
     | '/contato'
     | '/especialidades'
     | '/midia'
@@ -113,6 +125,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuthRoute: typeof AuthRoute
   ContatoRoute: typeof ContatoRoute
   EspecialidadesRoute: typeof EspecialidadesRoute
   MidiaRoute: typeof MidiaRoute
@@ -165,6 +178,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ContatoRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -177,6 +197,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuthRoute: AuthRoute,
   ContatoRoute: ContatoRoute,
   EspecialidadesRoute: EspecialidadesRoute,
   MidiaRoute: MidiaRoute,
