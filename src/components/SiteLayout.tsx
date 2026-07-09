@@ -114,9 +114,20 @@ export function SiteLayout({ children }: { children: ReactNode }) {
           </div>
         </div>
         <div className="border-t border-primary-foreground/15">
-          <div className="mx-auto max-w-7xl px-4 py-5 text-xs text-primary-foreground/70 flex flex-wrap justify-between gap-2">
-            <span>© {new Date().getFullYear()} Centro de Especialidades Filipinho — SEMUS São Luís</span>
-            <span>Todos os direitos reservados.</span>
+          <div className="mx-auto max-w-7xl px-4 py-5 text-xs text-primary-foreground/70 flex flex-wrap items-center justify-between gap-4">
+            <span>© {new Date().getFullYear()} Centro de Especialidades Filipinho — SEMUS São Luís · Todos os direitos reservados.</span>
+            <a
+              href="#"
+              className="flex items-center gap-2 text-primary-foreground/80 hover:text-primary-foreground transition"
+              aria-label="Desenvolvido por Elvis C. R. Silva"
+            >
+              <span className="hidden sm:inline text-[11px] uppercase tracking-widest">Desenvolvido por</span>
+              <img
+                src={logoElvisAsset.url}
+                alt="Elvis C. R. Silva"
+                className="h-9 w-auto rounded-md bg-primary-foreground/5 p-1"
+              />
+            </a>
           </div>
         </div>
       </footer>
