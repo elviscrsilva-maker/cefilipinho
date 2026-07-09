@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { SiteLayout } from "@/components/SiteLayout";
 import { Building2, Target, Eye, Heart, Award } from "lucide-react";
+import { useInstitutionalContent, useContactContent, useBrandingContent } from "@/lib/content";
 
 const TITLE = "Institucional — Centro de Especialidades Filipinho";
 const DESC =
@@ -26,6 +27,12 @@ const LEADERSHIP = [
 ];
 
 function Sobre() {
+  const { data: inst } = useInstitutionalContent();
+  const { data: contact } = useContactContent();
+  const { data: branding } = useBrandingContent();
+  const i = inst!;
+  const c = contact!;
+  const b = branding!;
   return (
     <SiteLayout>
       <section className="bg-gradient-hero text-primary-foreground">
@@ -45,37 +52,28 @@ function Sobre() {
 
       <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16 grid gap-6 md:grid-cols-3">
         {[
-          {
-            icon: Target,
-            title: "Missão",
-            body:
-              "Em consonância com a SEMUS, oferecer com excelência atendimento multiprofissional de forma resolutiva e humanizada à população de São Luís.",
-          },
-          {
-            icon: Eye,
-            title: "Visão",
-            body:
-              "Consolidar-se como referência no atendimento multiprofissional especializado junto à população de São Luís e municípios pactuados.",
-          },
-          {
-            icon: Heart,
-            title: "Valores",
-            body:
-              "Ética · Respeito · Acolhimento · Humanização · Excelência · Resolutividade · Satisfação do paciente.",
-          },
-        ].map((c) => (
-          <article
-            key={c.title}
-            className="rounded-2xl border border-border bg-card p-8 shadow-card"
-          >
+          { icon: Target, title: "Missão", body: i.mission },
+          { icon: Eye, title: "Visão", body: i.vision },
+          { icon: Heart, title: "Valores", body: i.values },
+        ].map((card) => (
+          <article key={card.title} className="rounded-2xl border border-border bg-card p-8 shadow-card">
             <div className="h-11 w-11 rounded-lg bg-gradient-primary grid place-items-center text-primary-foreground mb-5">
-              <c.icon className="h-5 w-5" />
+              <card.icon className="h-5 w-5" />
             </div>
-            <h2 className="font-display text-2xl text-primary font-semibold">{c.title}</h2>
-            <p className="mt-3 text-muted-foreground leading-relaxed">{c.body}</p>
+            <h2 className="font-display text-2xl text-primary font-semibold">{card.title}</h2>
+            <p className="mt-3 text-muted-foreground leading-relaxed whitespace-pre-line">{card.body}</p>
           </article>
         ))}
       </section>
+
+      {i.history && (
+        <section className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 pb-6">
+          <div className="rounded-2xl border border-border bg-card p-8 shadow-card">
+            <h2 className="font-display text-2xl text-primary font-semibold">Nossa história</h2>
+            <p className="mt-3 text-muted-foreground leading-relaxed whitespace-pre-line">{i.history}</p>
+          </div>
+        </section>
+      )}
 
       <section className="bg-secondary/60 border-y border-border">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16 grid gap-10 md:grid-cols-2">
@@ -96,11 +94,11 @@ function Sobre() {
           <div className="rounded-2xl bg-card border border-border p-8 shadow-card">
             <h3 className="font-display text-xl text-primary font-semibold">Ficha Técnica</h3>
             <dl className="mt-5 space-y-3 text-sm">
-              <Row k="CNES" v="2697998" />
-              <Row k="Endereço" v="Rua Vespasiano Ramos, 16 — CEP 65043-030, São Luís/MA" />
-              <Row k="Telefone" v="(98) 99149-7326" />
-              <Row k="E-mail" v="cemfilipinhoesp@gmail.com" />
-              <Row k="Horário" v="Segunda a Sexta · 07h às 18h" />
+              <Row k="CNES" v={b.cnes} />
+              <Row k="Endereço" v={c.address} />
+              <Row k="Telefone" v={c.phone} />
+              <Row k="E-mail" v={c.email} />
+              <Row k="Horário" v={c.hours} />
             </dl>
           </div>
         </div>

@@ -3,6 +3,7 @@ import { Mail, MapPin, Phone, Clock, Menu, X } from "lucide-react";
 import { useState, type ReactNode } from "react";
 import logoFilipinhoAsset from "@/assets/logo-filipinho.png.asset.json";
 import logoElvisAsset from "@/assets/logo-elvis.jpeg.asset.json";
+import { useBrandingContent, useContactContent } from "@/lib/content";
 
 const NAV = [
   { to: "/", label: "Início" },
@@ -15,16 +16,19 @@ const NAV = [
 
 export function SiteLayout({ children }: { children: ReactNode }) {
   const [open, setOpen] = useState(false);
+  const { data: branding } = useBrandingContent();
+  const { data: contact } = useContactContent();
+  const b = branding!;
+  const c = contact!;
+  const logoUrl = b.logo_url || logoFilipinhoAsset.url;
+  const devLogoUrl = b.footer_dev_logo_url || logoElvisAsset.url;
+
   return (
     <div className="min-h-screen flex flex-col bg-background">
       <header className="sticky top-0 z-40 border-b border-border bg-background/85 backdrop-blur-md">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           <Link to="/" className="flex items-center gap-3 group">
-            <img
-              src={logoFilipinhoAsset.url}
-              alt="Centro de Especialidades Filipinho"
-              className="h-11 sm:h-12 w-auto"
-            />
+            <img src={logoUrl} alt={b.site_title} className="h-11 sm:h-12 w-auto" />
           </Link>
           <nav className="hidden lg:flex items-center gap-1">
             {NAV.map((n) => (
@@ -72,32 +76,30 @@ export function SiteLayout({ children }: { children: ReactNode }) {
       <footer className="mt-16 bg-primary text-primary-foreground">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-14 grid gap-10 md:grid-cols-3">
           <div>
-            <div className="font-display text-xl font-semibold">Centro de Especialidades Filipinho</div>
-            <p className="mt-3 text-sm text-primary-foreground/80 italic">
-              "Qualidade e Excelência em cada Atendimento"
-            </p>
-            <p className="mt-4 text-xs text-primary-foreground/70">
-              CNES: 2697998 · Vinculado à SEMUS São Luís
-            </p>
+            <div className="font-display text-xl font-semibold">{b.site_title}</div>
+            <p className="mt-3 text-sm text-primary-foreground/80 italic">"{b.tagline}"</p>
+            {b.cnes && (
+              <p className="mt-4 text-xs text-primary-foreground/70">
+                CNES: {b.cnes} · Vinculado à SEMUS São Luís
+              </p>
+            )}
           </div>
           <div className="space-y-3 text-sm">
             <div className="flex items-start gap-3">
               <MapPin className="h-4 w-4 mt-0.5 shrink-0 text-gold" />
-              <span>Rua Vespasiano Ramos, 16 — CEP 65043-030, São Luís/MA</span>
+              <span>{c.address}</span>
             </div>
             <div className="flex items-center gap-3">
               <Phone className="h-4 w-4 text-gold" />
-              <span>(98) 99149-7326</span>
+              <span>{c.phone}</span>
             </div>
             <div className="flex items-center gap-3">
               <Mail className="h-4 w-4 text-gold" />
-              <a href="mailto:cemfilipinhoesp@gmail.com" className="hover:underline">
-                cemfilipinhoesp@gmail.com
-              </a>
+              <a href={`mailto:${c.email}`} className="hover:underline">{c.email}</a>
             </div>
             <div className="flex items-center gap-3">
               <Clock className="h-4 w-4 text-gold" />
-              <span>Segunda a Sexta · 07h às 18h</span>
+              <span>{c.hours}</span>
             </div>
           </div>
           <div>
@@ -110,23 +112,26 @@ export function SiteLayout({ children }: { children: ReactNode }) {
                   </Link>
                 </li>
               ))}
+              <li>
+                <Link to="/admin" className="text-primary-foreground/50 hover:text-primary-foreground text-xs">
+                  Área administrativa
+                </Link>
+              </li>
             </ul>
           </div>
         </div>
         <div className="border-t border-primary-foreground/15">
           <div className="mx-auto max-w-7xl px-4 py-5 text-xs text-primary-foreground/70 flex flex-wrap items-center justify-between gap-4">
-            <span>© {new Date().getFullYear()} Centro de Especialidades Filipinho — SEMUS São Luís · Todos os direitos reservados.</span>
+            <span>© {new Date().getFullYear()} {b.site_title} — SEMUS São Luís · Todos os direitos reservados.</span>
             <a
-              href="#"
+              href={b.footer_dev_url || "#"}
+              target={b.footer_dev_url ? "_blank" : undefined}
+              rel="noreferrer"
               className="flex items-center gap-2 text-primary-foreground/80 hover:text-primary-foreground transition"
               aria-label="Desenvolvido por Elvis C. R. Silva"
             >
               <span className="hidden sm:inline text-[11px] uppercase tracking-widest">Desenvolvido por</span>
-              <img
-                src={logoElvisAsset.url}
-                alt="Elvis C. R. Silva"
-                className="h-9 w-auto rounded-md bg-primary-foreground/5 p-1"
-              />
+              <img src={devLogoUrl} alt="Elvis C. R. Silva" className="h-9 w-auto rounded-md bg-primary-foreground/5 p-1" />
             </a>
           </div>
         </div>
