@@ -20,17 +20,11 @@ export function SiteLayout({ children }: { children: ReactNode }) {
       <header className="sticky top-0 z-40 border-b border-border bg-background/85 backdrop-blur-md">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           <Link to="/" className="flex items-center gap-3 group">
-            <div className="h-10 w-10 rounded-lg bg-gradient-primary grid place-items-center text-primary-foreground font-display font-bold shadow-card">
-              CF
-            </div>
-            <div className="leading-tight">
-              <div className="font-display text-primary font-semibold text-sm sm:text-base">
-                Centro de Especialidades
-              </div>
-              <div className="text-[11px] uppercase tracking-widest text-muted-foreground">
-                Filipinho
-              </div>
-            </div>
+            <img
+              src={logoFilipinhoAsset.url}
+              alt="Centro de Especialidades Filipinho"
+              className="h-11 sm:h-12 w-auto"
+            />
           </Link>
           <nav className="hidden lg:flex items-center gap-1">
             {NAV.map((n) => (
