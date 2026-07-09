@@ -1,10 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { SiteLayout } from "@/components/SiteLayout";
-import { Mic, Play, Headphones, Clock } from "lucide-react";
+import { Mic, Headphones, ExternalLink } from "lucide-react";
+import { usePodcastEpisodes } from "@/lib/content";
 
 const TITLE = "Podcast — Centro de Especialidades Filipinho";
-const DESC =
-  "Podcast do Centro de Especialidades Filipinho: conversas sobre saúde, cuidado humanizado e prevenção.";
+const DESC = "Podcast do Centro de Especialidades Filipinho: conversas sobre saúde, prevenção e cuidado.";
 
 export const Route = createFileRoute("/podcast")({
   component: Podcast,
@@ -18,67 +18,66 @@ export const Route = createFileRoute("/podcast")({
   }),
 });
 
-const EPISODES = [
-  { n: "01", title: "Cuidado humanizado no SUS", desc: "Um bate-papo com a direção sobre acolhimento.", duration: "28 min" },
-  { n: "02", title: "Prevenção começa na atenção especializada", desc: "Como especialistas atuam na saúde da comunidade.", duration: "32 min" },
-  { n: "03", title: "Saúde da mulher e fisioterapia pélvica", desc: "Um serviço pouco conhecido, muito transformador.", duration: "25 min" },
-];
-
 function Podcast() {
+  const { data: eps = [] } = usePodcastEpisodes();
   return (
     <SiteLayout>
       <section className="bg-gradient-hero text-primary-foreground">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-20 grid gap-10 md:grid-cols-[1fr_auto] items-center">
-          <div>
-            <div className="text-xs uppercase tracking-widest text-gold flex items-center gap-2">
-              <Mic className="h-4 w-4" /> Podcast Filipinho
-            </div>
-            <h1 className="mt-3 font-display text-4xl md:text-5xl font-semibold">
-              Conversas sobre saúde
-            </h1>
-            <p className="mt-4 max-w-2xl text-primary-foreground/85 text-lg">
-              Episódios com nossos especialistas, gestores e profissionais — informação de qualidade
-              para pacientes, familiares e a comunidade.
-            </p>
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-20">
+          <div className="flex items-center gap-2 text-xs uppercase tracking-widest text-gold">
+            <Mic className="h-4 w-4" /> Podcast
           </div>
-          <div className="h-40 w-40 rounded-3xl bg-gold text-primary grid place-items-center shadow-elegant justify-self-start md:justify-self-end">
-            <Headphones className="h-20 w-20" />
-          </div>
+          <h1 className="mt-3 font-display text-4xl md:text-5xl font-semibold">Podcast Filipinho</h1>
+          <p className="mt-4 max-w-2xl text-primary-foreground/85 text-lg">
+            Conversas sobre saúde, prevenção, cuidado humanizado e o dia a dia da unidade.
+          </p>
         </div>
       </section>
 
       <section className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 py-16">
-        <h2 className="font-display text-2xl text-primary font-semibold">Episódios</h2>
-        <div className="mt-8 space-y-4">
-          {EPISODES.map((e) => (
-            <article
-              key={e.n}
-              className="group flex items-center gap-5 rounded-2xl border border-border bg-card p-5 shadow-card hover:shadow-elegant transition"
-            >
-              <div className="h-14 w-14 rounded-xl bg-gradient-primary text-primary-foreground grid place-items-center font-display font-semibold shrink-0">
-                {e.n}
-              </div>
-              <div className="flex-1 min-w-0">
-                <h3 className="font-display text-lg text-primary font-semibold truncate">{e.title}</h3>
-                <p className="text-sm text-muted-foreground mt-0.5">{e.desc}</p>
-                <div className="mt-2 flex items-center gap-1.5 text-xs text-muted-foreground">
-                  <Clock className="h-3.5 w-3.5" /> {e.duration}
+        {eps.length === 0 ? (
+          <p className="text-sm text-muted-foreground text-center">Nenhum episódio publicado ainda.</p>
+        ) : (
+          <div className="space-y-6">
+            {eps.map((ep) => (
+              <article key={ep.id} className="rounded-2xl border border-border bg-card p-6 shadow-card">
+                <div className="flex gap-5 items-start">
+                  <div className="h-24 w-24 rounded-xl overflow-hidden bg-gradient-primary grid place-items-center text-primary-foreground shrink-0">
+                    {ep.cover_url ? (
+                      <img src={ep.cover_url} alt="" className="h-full w-full object-cover" />
+                    ) : (
+                      <Headphones className="h-8 w-8" />
+                    )}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    {ep.episode_number && (
+                      <div className="text-xs uppercase tracking-widest text-primary/70">
+                        Episódio {ep.episode_number}
+                      </div>
+                    )}
+                    <h2 className="mt-1 font-display text-xl text-primary font-semibold">{ep.title}</h2>
+                    {ep.description && (
+                      <p className="mt-2 text-sm text-muted-foreground whitespace-pre-line">{ep.description}</p>
+                    )}
+                  </div>
                 </div>
-              </div>
-              <button
-                aria-label={`Reproduzir episódio ${e.n}`}
-                className="h-12 w-12 rounded-full bg-primary text-primary-foreground grid place-items-center hover:bg-primary-glow transition shrink-0"
-              >
-                <Play className="h-5 w-5 ml-0.5" fill="currentColor" />
-              </button>
-            </article>
-          ))}
-        </div>
-
-        <div className="mt-10 rounded-2xl border border-dashed border-border bg-secondary/40 p-6 text-sm text-muted-foreground">
-          <strong className="text-primary">Em breve:</strong> integração com Spotify, YouTube e
-          plataformas de podcast para transmissão dos episódios diretamente aqui no site.
-        </div>
+                {ep.audio_url && (
+                  <audio src={ep.audio_url} controls className="mt-5 w-full" />
+                )}
+                {ep.external_url && (
+                  <a
+                    href={ep.external_url}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="mt-4 inline-flex items-center gap-2 text-sm text-primary hover:underline"
+                  >
+                    <ExternalLink className="h-4 w-4" /> Ouvir na plataforma externa
+                  </a>
+                )}
+              </article>
+            ))}
+          </div>
+        )}
       </section>
     </SiteLayout>
   );
