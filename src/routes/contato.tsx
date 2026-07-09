@@ -22,6 +22,13 @@ export const Route = createFileRoute("/contato")({
 
 function Contato() {
   const [sent, setSent] = useState(false);
+  const { data: contact } = useContactContent();
+  const c = contact!;
+  const phoneHref = "tel:+" + c.whatsapp.replace(/\D/g, "");
+  const waHref = `https://wa.me/${c.whatsapp.replace(/\D/g, "")}`;
+  const mapSrc =
+    c.map_embed_url ||
+    `https://www.google.com/maps?q=${encodeURIComponent(c.address)}&output=embed`;
   return (
     <SiteLayout>
       <section className="bg-gradient-hero text-primary-foreground">
@@ -36,15 +43,16 @@ function Contato() {
 
       <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16 grid gap-10 lg:grid-cols-2">
         <div className="space-y-5">
-          <InfoCard icon={MapPin} title="Endereço" text="Rua Vespasiano Ramos, 16 — CEP 65043-030, São Luís/MA" />
-          <InfoCard icon={Phone} title="Telefone" text="(98) 99149-7326" href="tel:+5598991497326" />
-          <InfoCard icon={Mail} title="E-mail" text="cemfilipinhoesp@gmail.com" href="mailto:cemfilipinhoesp@gmail.com" />
-          <InfoCard icon={Clock} title="Horário" text="Segunda a Sexta · 07h às 18h" />
+          <InfoCard icon={MapPin} title="Endereço" text={c.address} />
+          <InfoCard icon={Phone} title="Telefone" text={c.phone} href={phoneHref} />
+          <InfoCard icon={MessageCircle} title="WhatsApp" text={c.phone} href={waHref} />
+          <InfoCard icon={Mail} title="E-mail" text={c.email} href={`mailto:${c.email}`} />
+          <InfoCard icon={Clock} title="Horário" text={c.hours} />
 
           <div className="rounded-2xl overflow-hidden border border-border shadow-card">
             <iframe
               title="Mapa - Centro Filipinho"
-              src="https://www.google.com/maps?q=Rua+Vespasiano+Ramos,+16,+S%C3%A3o+Lu%C3%ADs+-+MA&output=embed"
+              src={mapSrc}
               width="100%"
               height="280"
               loading="lazy"
