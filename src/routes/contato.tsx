@@ -153,11 +153,15 @@ function Field({
   name,
   type = "text",
   required,
+  value,
+  onChange,
 }: {
   label: string;
   name: string;
   type?: string;
   required?: boolean;
+  value: string;
+  onChange: (v: string) => void;
 }) {
   return (
     <div>
@@ -166,6 +170,8 @@ function Field({
         name={name}
         type={type}
         required={required}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
         className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
       />
     </div>
