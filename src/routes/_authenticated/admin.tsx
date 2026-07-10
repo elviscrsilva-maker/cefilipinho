@@ -42,6 +42,8 @@ type Tab =
   | "institucional"
   | "contato"
   | "branding"
+  | "especialidades"
+  | "aparencia"
   | "midia"
   | "podcast"
   | "conta";
@@ -51,6 +53,8 @@ const TABS: { id: Tab; label: string; icon: typeof Home }[] = [
   { id: "institucional", label: "Institucional", icon: Building2 },
   { id: "contato", label: "Contato", icon: Phone },
   { id: "branding", label: "Marca e Rodapé", icon: Palette },
+  { id: "especialidades", label: "Especialidades e Exames", icon: Stethoscope },
+  { id: "aparencia", label: "Aparência (cores/fontes)", icon: Palette },
   { id: "midia", label: "Mídia (Fotos/Vídeos)", icon: ImageIcon },
   { id: "podcast", label: "Podcast", icon: Mic },
   { id: "conta", label: "Minha Conta", icon: KeyRound },
