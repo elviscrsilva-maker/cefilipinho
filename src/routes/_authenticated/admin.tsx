@@ -157,6 +157,8 @@ function AdminPage() {
           {tab === "institucional" && <InstitutionalEditor />}
           {tab === "contato" && <ContactEditor />}
           {tab === "branding" && <BrandingEditor />}
+          {tab === "especialidades" && <SpecialtiesEditor />}
+          {tab === "aparencia" && <AppearanceEditor />}
           {tab === "midia" && <MediaEditor />}
           {tab === "podcast" && <PodcastEditor />}
           {tab === "conta" && <AccountEditor />}
