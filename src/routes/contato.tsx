@@ -21,14 +21,31 @@ export const Route = createFileRoute("/contato")({
 });
 
 function Contato() {
-  const [sent, setSent] = useState(false);
   const { data: contact } = useContactContent();
   const c = contact!;
+  const [form, setForm] = useState({ nome: "", email: "", telefone: "", mensagem: "" });
   const phoneHref = "tel:+" + c.whatsapp.replace(/\D/g, "");
   const waHref = `https://wa.me/${c.whatsapp.replace(/\D/g, "")}`;
   const mapSrc =
     c.map_embed_url ||
     `https://www.google.com/maps?q=${encodeURIComponent(c.address)}&output=embed`;
+
+  const buildMessage = () =>
+    `Olá! Meu nome é ${form.nome}.\n\nE-mail: ${form.email}\nTelefone: ${form.telefone}\n\nMensagem:\n${form.mensagem}`;
+
+  function sendWhatsapp(e: React.FormEvent) {
+    e.preventDefault();
+    const url = `https://wa.me/${c.whatsapp.replace(/\D/g, "")}?text=${encodeURIComponent(buildMessage())}`;
+    window.open(url, "_blank");
+  }
+  function sendEmail() {
+    const subject = `Contato pelo site — ${form.nome || "Visitante"}`;
+    const url = `mailto:${c.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(buildMessage())}`;
+    window.location.href = url;
+  }
+
+  const upd = (k: keyof typeof form, v: string) => setForm({ ...form, [k]: v });
+
   return (
     <SiteLayout>
       <section className="bg-gradient-hero text-primary-foreground">
@@ -62,38 +79,43 @@ function Contato() {
         </div>
 
         <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            setSent(true);
-          }}
+          onSubmit={sendWhatsapp}
           className="rounded-2xl bg-card border border-border p-8 shadow-card space-y-5"
         >
           <h2 className="font-display text-2xl text-primary font-semibold">Envie uma mensagem</h2>
-          <Field label="Nome completo" name="nome" required />
-          <Field label="E-mail" name="email" type="email" required />
-          <Field label="Telefone" name="telefone" type="tel" />
+          <p className="text-sm text-muted-foreground -mt-3">
+            Preencha o formulário e envie diretamente pelo WhatsApp ou por e-mail para {c.email}.
+          </p>
+          <Field label="Nome completo" name="nome" value={form.nome} onChange={(v) => upd("nome", v)} required />
+          <Field label="E-mail" name="email" type="email" value={form.email} onChange={(v) => upd("email", v)} required />
+          <Field label="Telefone" name="telefone" type="tel" value={form.telefone} onChange={(v) => upd("telefone", v)} />
           <div>
             <label className="block text-sm font-medium text-primary mb-1.5">Mensagem</label>
             <textarea
-              name="mensagem"
+              value={form.mensagem}
+              onChange={(e) => upd("mensagem", e.target.value)}
               required
               rows={5}
               className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
             />
           </div>
-          <button
-            type="submit"
-            className="inline-flex items-center gap-2 rounded-md bg-gradient-primary px-5 py-3 text-sm font-semibold text-primary-foreground shadow-card hover:brightness-110 transition"
-          >
-            <Send className="h-4 w-4" /> Enviar mensagem
-          </button>
-          {sent && (
-            <p className="text-sm text-primary bg-secondary rounded-md p-3">
-              Obrigado! Sua mensagem foi registrada. Retornaremos em breve.
-            </p>
-          )}
+          <div className="flex flex-wrap gap-3">
+            <button
+              type="submit"
+              className="inline-flex items-center gap-2 rounded-md bg-[#25D366] px-5 py-3 text-sm font-semibold text-white shadow-card hover:brightness-110 transition"
+            >
+              <MessageCircle className="h-4 w-4" /> Enviar pelo WhatsApp
+            </button>
+            <button
+              type="button"
+              onClick={sendEmail}
+              className="inline-flex items-center gap-2 rounded-md bg-gradient-primary px-5 py-3 text-sm font-semibold text-primary-foreground shadow-card hover:brightness-110 transition"
+            >
+              <Send className="h-4 w-4" /> Enviar por e-mail
+            </button>
+          </div>
           <p className="text-xs text-muted-foreground">
-            * Este formulário é ilustrativo. Podemos conectar a um e-mail real ou WhatsApp no próximo ajuste.
+            Ao clicar, sua mensagem será aberta no WhatsApp ou no seu aplicativo de e-mail, já preenchida com os dados informados.
           </p>
         </form>
       </section>
