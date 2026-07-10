@@ -37,6 +37,15 @@ export type BrandingContent = {
   footer_dev_url: string;
 };
 
+export type AppearanceContent = {
+  primary_color: string;
+  primary_glow_color: string;
+  gold_color: string;
+  heading_font: string;
+  body_font: string;
+  google_fonts_url: string;
+};
+
 export type MediaItem = {
   id: string;
   kind: "photo" | "video";
@@ -57,6 +66,16 @@ export type PodcastEpisode = {
   external_url: string | null;
   episode_number: number | null;
   published_at: string;
+  published: boolean;
+};
+
+export type SpecialtyCategory = "medica" | "nao_medica" | "procedimento" | "exame";
+export type Specialty = {
+  id: string;
+  category: SpecialtyCategory;
+  name: string;
+  icon: string;
+  sort_order: number;
   published: boolean;
 };
 
@@ -97,6 +116,14 @@ export const DEFAULTS = {
     footer_dev_logo_url: "",
     footer_dev_url: "",
   } as BrandingContent,
+  appearance: {
+    primary_color: "",
+    primary_glow_color: "",
+    gold_color: "",
+    heading_font: "",
+    body_font: "",
+    google_fonts_url: "",
+  } as AppearanceContent,
 };
 
 async function fetchContent<T>(key: string, fallback: T): Promise<T> {
@@ -137,6 +164,13 @@ export function useBrandingContent() {
     initialData: DEFAULTS.branding,
   });
 }
+export function useAppearanceContent() {
+  return useQuery({
+    queryKey: ["content", "appearance"],
+    queryFn: () => fetchContent("appearance", DEFAULTS.appearance),
+    initialData: DEFAULTS.appearance,
+  });
+}
 
 export function useMediaItems() {
   return useQuery({
@@ -166,5 +200,21 @@ export function usePodcastEpisodes() {
       return (data ?? []) as PodcastEpisode[];
     },
     initialData: [] as PodcastEpisode[],
+  });
+}
+
+export function useSpecialties() {
+  return useQuery({
+    queryKey: ["specialties"],
+    queryFn: async (): Promise<Specialty[]> => {
+      const { data } = await supabase
+        .from("specialties")
+        .select("*")
+        .eq("published", true)
+        .order("category")
+        .order("sort_order");
+      return (data ?? []) as Specialty[];
+    },
+    initialData: [] as Specialty[],
   });
 }

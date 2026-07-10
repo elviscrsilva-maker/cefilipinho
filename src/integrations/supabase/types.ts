@@ -116,6 +116,39 @@ export type Database = {
         }
         Relationships: []
       }
+      specialties: {
+        Row: {
+          category: Database["public"]["Enums"]["specialty_category"]
+          created_at: string
+          icon: string
+          id: string
+          name: string
+          published: boolean
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          category: Database["public"]["Enums"]["specialty_category"]
+          created_at?: string
+          icon?: string
+          id?: string
+          name: string
+          published?: boolean
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          category?: Database["public"]["Enums"]["specialty_category"]
+          created_at?: string
+          icon?: string
+          id?: string
+          name?: string
+          published?: boolean
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string
@@ -153,6 +186,7 @@ export type Database = {
     Enums: {
       app_role: "admin" | "user"
       media_kind: "photo" | "video"
+      specialty_category: "medica" | "nao_medica" | "procedimento" | "exame"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -282,6 +316,7 @@ export const Constants = {
     Enums: {
       app_role: ["admin", "user"],
       media_kind: ["photo", "video"],
+      specialty_category: ["medica", "nao_medica", "procedimento", "exame"],
     },
   },
 } as const

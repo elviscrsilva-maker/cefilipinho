@@ -3,7 +3,7 @@ import { Mail, MapPin, Phone, Clock, Menu, X } from "lucide-react";
 import { useState, type ReactNode } from "react";
 import logoFilipinhoAsset from "@/assets/logo-filipinho.png.asset.json";
 import logoElvisAsset from "@/assets/logo-elvis.jpeg.asset.json";
-import { useBrandingContent, useContactContent } from "@/lib/content";
+import { useBrandingContent, useContactContent, useAppearanceContent } from "@/lib/content";
 
 const NAV = [
   { to: "/", label: "Início" },
@@ -13,6 +13,24 @@ const NAV = [
   { to: "/podcast", label: "Podcast" },
   { to: "/contato", label: "Contato" },
 ] as const;
+
+function AppearanceInjector() {
+  const { data } = useAppearanceContent();
+  const a = data!;
+  const css = `
+    ${a.primary_color ? `--primary: ${a.primary_color};` : ""}
+    ${a.primary_glow_color ? `--primary-glow: ${a.primary_glow_color};` : ""}
+    ${a.gold_color ? `--gold: ${a.gold_color};` : ""}
+    ${a.heading_font ? `--font-display: ${a.heading_font}, Georgia, serif;` : ""}
+    ${a.body_font ? `--font-sans: ${a.body_font}, ui-sans-serif, system-ui, sans-serif;` : ""}
+  `.trim();
+  return (
+    <>
+      {a.google_fonts_url && <link rel="stylesheet" href={a.google_fonts_url} />}
+      {css && <style>{`:root{${css}}`}</style>}
+    </>
+  );
+}
 
 export function SiteLayout({ children }: { children: ReactNode }) {
   const [open, setOpen] = useState(false);
@@ -25,9 +43,11 @@ export function SiteLayout({ children }: { children: ReactNode }) {
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
+      <AppearanceInjector />
       <header className="sticky top-0 z-40 border-b border-border bg-background/85 backdrop-blur-md">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           <Link to="/" className="flex items-center gap-3 group">
+
             <img src={logoUrl} alt={b.site_title} className="h-11 sm:h-12 w-auto" />
           </Link>
           <nav className="hidden lg:flex items-center gap-1">

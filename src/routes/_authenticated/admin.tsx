@@ -9,8 +9,11 @@ import {
   type InstitutionalContent,
   type ContactContent,
   type BrandingContent,
+  type AppearanceContent,
   type MediaItem,
   type PodcastEpisode,
+  type Specialty,
+  type SpecialtyCategory,
 } from "@/lib/content";
 import {
   Loader2,
@@ -28,6 +31,7 @@ import {
   Phone,
   Palette,
   KeyRound,
+  Stethoscope,
 } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/admin")({
@@ -39,6 +43,8 @@ type Tab =
   | "institucional"
   | "contato"
   | "branding"
+  | "especialidades"
+  | "aparencia"
   | "midia"
   | "podcast"
   | "conta";
@@ -48,6 +54,8 @@ const TABS: { id: Tab; label: string; icon: typeof Home }[] = [
   { id: "institucional", label: "Institucional", icon: Building2 },
   { id: "contato", label: "Contato", icon: Phone },
   { id: "branding", label: "Marca e Rodapé", icon: Palette },
+  { id: "especialidades", label: "Especialidades e Exames", icon: Stethoscope },
+  { id: "aparencia", label: "Aparência (cores/fontes)", icon: Palette },
   { id: "midia", label: "Mídia (Fotos/Vídeos)", icon: ImageIcon },
   { id: "podcast", label: "Podcast", icon: Mic },
   { id: "conta", label: "Minha Conta", icon: KeyRound },
@@ -149,6 +157,8 @@ function AdminPage() {
           {tab === "institucional" && <InstitutionalEditor />}
           {tab === "contato" && <ContactEditor />}
           {tab === "branding" && <BrandingEditor />}
+          {tab === "especialidades" && <SpecialtiesEditor />}
+          {tab === "aparencia" && <AppearanceEditor />}
           {tab === "midia" && <MediaEditor />}
           {tab === "podcast" && <PodcastEditor />}
           {tab === "conta" && <AccountEditor />}
@@ -666,5 +676,145 @@ function UploadOrUrl({
         </a>
       )}
     </div>
+  );
+}
+
+/* ---------- SPECIALTIES ---------- */
+const CATEGORY_LABELS: Record<SpecialtyCategory, string> = {
+  medica: "Especialidade Médica",
+  nao_medica: "Especialidade Não Médica",
+  procedimento: "Procedimento",
+  exame: "Exame Diagnóstico",
+};
+
+function SpecialtiesEditor() {
+  const qc = useQueryClient();
+  const { data: items = [], refetch } = useQuery({
+    queryKey: ["admin_specialties"],
+    queryFn: async (): Promise<Specialty[]> => {
+      const { data } = await supabase.from("specialties").select("*").order("category").order("sort_order");
+      return (data ?? []) as Specialty[];
+    },
+  });
+  const [toast, setToast] = useState<string | null>(null);
+
+  async function add(category: SpecialtyCategory) {
+    const { error } = await supabase.from("specialties").insert({
+      category,
+      name: "Novo item",
+      icon: "Stethoscope",
+      sort_order: (items.filter((i) => i.category === category).length + 1) * 10,
+    });
+    if (error) return setToast("Erro: " + error.message);
+    refetch();
+  }
+  async function upd(id: string, patch: Partial<Specialty>) {
+    const { error } = await supabase.from("specialties").update(patch).eq("id", id);
+    if (error) return setToast("Erro: " + error.message);
+    qc.invalidateQueries({ queryKey: ["specialties"] });
+    refetch();
+  }
+  async function del(id: string) {
+    if (!confirm("Excluir este item?")) return;
+    const { error } = await supabase.from("specialties").delete().eq("id", id);
+    if (error) return setToast("Erro: " + error.message);
+    qc.invalidateQueries({ queryKey: ["specialties"] });
+    refetch();
+  }
+
+  const cats: SpecialtyCategory[] = ["medica", "nao_medica", "procedimento", "exame"];
+
+  return (
+    <Card title="Especialidades e Exames" description="Adicione, edite ou remova especialidades médicas/não médicas, procedimentos e exames diagnósticos.">
+      <p className="text-xs text-muted-foreground">
+        Dica: no campo "Ícone", use um nome da biblioteca Lucide (ex.: Heart, Brain, Stethoscope, TestTube, Activity).
+        Veja a lista completa em <a href="https://lucide.dev/icons/" target="_blank" rel="noreferrer" className="text-primary underline">lucide.dev/icons</a>.
+      </p>
+      {cats.map((cat) => {
+        const list = items.filter((i) => i.category === cat);
+        return (
+          <div key={cat} className="rounded-lg border border-border p-4 space-y-3">
+            <div className="flex items-center justify-between">
+              <h3 className="font-display text-lg text-primary font-semibold">{CATEGORY_LABELS[cat]}</h3>
+              <button onClick={() => add(cat)} className="inline-flex items-center gap-1.5 rounded-md bg-primary px-2.5 py-1.5 text-xs text-primary-foreground">
+                <Plus className="h-3.5 w-3.5" /> Adicionar
+              </button>
+            </div>
+            {list.length === 0 && <p className="text-xs text-muted-foreground">Nenhum item cadastrado.</p>}
+            {list.map((it) => (
+              <div key={it.id} className="grid gap-2 md:grid-cols-[1fr_180px_100px_auto_auto] items-center border-t border-border pt-3">
+                <TextInput defaultValue={it.name} placeholder="Nome" onBlur={(e) => upd(it.id, { name: e.target.value })} />
+                <TextInput defaultValue={it.icon} placeholder="Ícone (ex: Heart)" onBlur={(e) => upd(it.id, { icon: e.target.value })} />
+                <TextInput type="number" defaultValue={it.sort_order} placeholder="Ordem" onBlur={(e) => upd(it.id, { sort_order: Number(e.target.value) || 0 })} />
+                <label className="flex items-center gap-1.5 text-xs whitespace-nowrap">
+                  <input type="checkbox" checked={it.published} onChange={(e) => upd(it.id, { published: e.target.checked })} />
+                  Publicado
+                </label>
+                <button onClick={() => del(it.id)} className="text-destructive hover:bg-destructive/10 rounded-md p-2" aria-label="Excluir">
+                  <Trash2 className="h-4 w-4" />
+                </button>
+              </div>
+            ))}
+          </div>
+        );
+      })}
+      <Toast text={toast} />
+    </Card>
+  );
+}
+
+/* ---------- APPEARANCE ---------- */
+function AppearanceEditor() {
+  const { data, save } = useContentSection<AppearanceContent>("appearance", DEFAULTS.appearance);
+  const [form, setForm] = useState<AppearanceContent>(data);
+  const [saving, setSaving] = useState(false);
+  const [toast, setToast] = useState<string | null>(null);
+  useEffect(() => setForm(data), [data]);
+  const upd = (k: keyof AppearanceContent, v: string) => setForm({ ...form, [k]: v });
+
+  return (
+    <Card title="Aparência" description="Personalize cores e fontes do site. Deixe em branco para usar os valores padrão.">
+      <div className="grid gap-4 md:grid-cols-3">
+        <Field label="Cor primária" hint="Ex.: #1e3a8a">
+          <div className="flex gap-2">
+            <input type="color" value={form.primary_color || "#1e3a8a"} onChange={(e) => upd("primary_color", e.target.value)} className="h-10 w-14 rounded border border-input" />
+            <TextInput value={form.primary_color} onChange={(e) => upd("primary_color", e.target.value)} placeholder="#1e3a8a" />
+          </div>
+        </Field>
+        <Field label="Cor primária clara (brilho)" hint="Usada em gradientes.">
+          <div className="flex gap-2">
+            <input type="color" value={form.primary_glow_color || "#3b82f6"} onChange={(e) => upd("primary_glow_color", e.target.value)} className="h-10 w-14 rounded border border-input" />
+            <TextInput value={form.primary_glow_color} onChange={(e) => upd("primary_glow_color", e.target.value)} placeholder="#3b82f6" />
+          </div>
+        </Field>
+        <Field label="Cor de destaque (dourado)">
+          <div className="flex gap-2">
+            <input type="color" value={form.gold_color || "#d4af37"} onChange={(e) => upd("gold_color", e.target.value)} className="h-10 w-14 rounded border border-input" />
+            <TextInput value={form.gold_color} onChange={(e) => upd("gold_color", e.target.value)} placeholder="#d4af37" />
+          </div>
+        </Field>
+      </div>
+      <div className="grid gap-4 md:grid-cols-2">
+        <Field label="Fonte dos títulos" hint="Nome da fonte (ex.: Fraunces, Playfair Display, Merriweather).">
+          <TextInput value={form.heading_font} onChange={(e) => upd("heading_font", e.target.value)} placeholder="Fraunces" />
+        </Field>
+        <Field label="Fonte do corpo" hint="Ex.: Inter, Roboto, Poppins, Nunito Sans.">
+          <TextInput value={form.body_font} onChange={(e) => upd("body_font", e.target.value)} placeholder="Inter" />
+        </Field>
+      </div>
+      <Field label="URL do Google Fonts" hint='Para carregar as fontes escolhidas. Cole a URL do <link> gerada em fonts.google.com. Ex.: https://fonts.googleapis.com/css2?family=Playfair+Display&family=Roboto&display=swap'>
+        <TextInput value={form.google_fonts_url} onChange={(e) => upd("google_fonts_url", e.target.value)} placeholder="https://fonts.googleapis.com/css2?..." />
+      </Field>
+      <SaveButton
+        saving={saving}
+        onClick={async () => {
+          setSaving(true);
+          try { await save(form); setToast("Aparência atualizada!"); setTimeout(() => setToast(null), 2500); }
+          catch (e: any) { setToast("Erro: " + e.message); }
+          finally { setSaving(false); }
+        }}
+      />
+      <Toast text={toast} />
+    </Card>
   );
 }
