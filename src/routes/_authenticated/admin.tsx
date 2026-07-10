@@ -9,8 +9,11 @@ import {
   type InstitutionalContent,
   type ContactContent,
   type BrandingContent,
+  type AppearanceContent,
   type MediaItem,
   type PodcastEpisode,
+  type Specialty,
+  type SpecialtyCategory,
 } from "@/lib/content";
 import {
   Loader2,
