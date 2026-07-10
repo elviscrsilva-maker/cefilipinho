@@ -31,6 +31,7 @@ import {
   Phone,
   Palette,
   KeyRound,
+  Stethoscope,
 } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/admin")({
