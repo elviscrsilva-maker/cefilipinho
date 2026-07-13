@@ -94,8 +94,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "description", content: "Blue Horizon Health is a medical specialty center website for showcasing services, institutional information, and multimedia content." },
       { property: "og:description", content: "Blue Horizon Health is a medical specialty center website for showcasing services, institutional information, and multimedia content." },
       { name: "twitter:description", content: "Blue Horizon Health is a medical specialty center website for showcasing services, institutional information, and multimedia content." },
-      { property: "og:image", content: "https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=1200" },
-      { name: "twitter:image", content: "https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=1200" },
+      { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/6a8vCQujcrhCjyT3wWnZnZokVAz2/social-images/social-1783939054506-imagem_ce_filipinho.webp" },
+      { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/6a8vCQujcrhCjyT3wWnZnZokVAz2/social-images/social-1783939054506-imagem_ce_filipinho.webp" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
