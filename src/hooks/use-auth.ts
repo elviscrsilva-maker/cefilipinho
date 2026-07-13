@@ -4,7 +4,8 @@ import type { User } from "@supabase/supabase-js";
 
 export function useAuth() {
   const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [sessionReady, setSessionReady] = useState(false);
+  const [adminLoading, setAdminLoading] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
@@ -12,18 +13,14 @@ export function useAuth() {
 
     const { data: sub } = supabase.auth.onAuthStateChange((_evt, session) => {
       if (!mounted) return;
-      setLoading(true);
       setUser(session?.user ?? null);
-      if (!session?.user) {
-        setIsAdmin(false);
-        setLoading(false);
-      }
+      setSessionReady(true);
     });
 
     supabase.auth.getSession().then(({ data }) => {
       if (!mounted) return;
       setUser(data.session?.user ?? null);
-      if (!data.session?.user) setLoading(false);
+      setSessionReady(true);
     });
 
     return () => {
@@ -35,11 +32,11 @@ export function useAuth() {
   useEffect(() => {
     if (!user) {
       setIsAdmin(false);
-      setLoading(false);
+      setAdminLoading(false);
       return;
     }
     let cancelled = false;
-    setLoading(true);
+    setAdminLoading(true);
     supabase
       .from("user_roles")
       .select("role")
@@ -49,7 +46,7 @@ export function useAuth() {
       .then(({ data, error }) => {
         if (cancelled) return;
         setIsAdmin(!error && !!data);
-        setLoading(false);
+        setAdminLoading(false);
       });
 
     return () => {
@@ -57,5 +54,5 @@ export function useAuth() {
     };
   }, [user]);
 
-  return { user, loading, isAdmin };
+  return { user, loading: !sessionReady || adminLoading, isAdmin };
 }
