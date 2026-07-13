@@ -12,13 +12,18 @@ export function useAuth() {
 
     const { data: sub } = supabase.auth.onAuthStateChange((_evt, session) => {
       if (!mounted) return;
+      setLoading(true);
       setUser(session?.user ?? null);
+      if (!session?.user) {
+        setIsAdmin(false);
+        setLoading(false);
+      }
     });
 
     supabase.auth.getSession().then(({ data }) => {
       if (!mounted) return;
       setUser(data.session?.user ?? null);
-      setLoading(false);
+      if (!data.session?.user) setLoading(false);
     });
 
     return () => {
@@ -30,15 +35,26 @@ export function useAuth() {
   useEffect(() => {
     if (!user) {
       setIsAdmin(false);
+      setLoading(false);
       return;
     }
+    let cancelled = false;
+    setLoading(true);
     supabase
       .from("user_roles")
       .select("role")
       .eq("user_id", user.id)
       .eq("role", "admin")
       .maybeSingle()
-      .then(({ data }) => setIsAdmin(!!data));
+      .then(({ data, error }) => {
+        if (cancelled) return;
+        setIsAdmin(!error && !!data);
+        setLoading(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
   }, [user]);
 
   return { user, loading, isAdmin };
