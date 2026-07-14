@@ -61,7 +61,7 @@ function Sobre() {
               <card.icon className="h-5 w-5" />
             </div>
             <h2 className="font-display text-2xl text-primary font-semibold">{card.title}</h2>
-            <p className="mt-3 text-muted-foreground leading-relaxed whitespace-pre-line">{card.body}</p>
+            <p className={`mt-3 text-muted-foreground leading-relaxed whitespace-pre-line ${ALIGN[i.cards_align ?? "left"]}`}>{card.body}</p>
           </article>
         ))}
       </section>
