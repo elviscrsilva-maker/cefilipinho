@@ -70,7 +70,7 @@ function Sobre() {
         <section className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 pb-6">
           <div className="rounded-2xl border border-border bg-card p-8 shadow-card">
             <h2 className="font-display text-2xl text-primary font-semibold">Nossa história</h2>
-            <p className="mt-3 text-muted-foreground leading-relaxed whitespace-pre-line">{i.history}</p>
+            <p className={`mt-3 text-muted-foreground leading-relaxed whitespace-pre-line ${ALIGN[i.history_align ?? "left"]}`}>{i.history}</p>
           </div>
         </section>
       )}
