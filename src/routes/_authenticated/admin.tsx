@@ -229,6 +229,46 @@ function Toast({ text }: { text: string | null }) {
     </div>
   );
 }
+function AlignPicker({
+  label,
+  value,
+  onChange,
+}: {
+  label: string;
+  value: TextAlign;
+  onChange: (v: TextAlign) => void;
+}) {
+  const opts: { v: TextAlign; icon: typeof AlignLeft; title: string }[] = [
+    { v: "left", icon: AlignLeft, title: "Esquerda" },
+    { v: "center", icon: AlignCenter, title: "Centralizar" },
+    { v: "right", icon: AlignRight, title: "Direita" },
+    { v: "justify", icon: AlignJustify, title: "Justificar" },
+  ];
+  return (
+    <div>
+      <span className="text-xs font-semibold text-primary uppercase tracking-wider">{label}</span>
+      <div className="mt-1 inline-flex rounded-md border border-input bg-background overflow-hidden">
+        {opts.map((o) => {
+          const Icon = o.icon;
+          const active = value === o.v;
+          return (
+            <button
+              key={o.v}
+              type="button"
+              onClick={() => onChange(o.v)}
+              title={o.title}
+              className={`px-3 py-2 text-sm transition ${
+                active ? "bg-primary text-primary-foreground" : "text-foreground hover:bg-secondary"
+              }`}
+            >
+              <Icon className="h-4 w-4" />
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
 
 /* ---------- content section hook ---------- */
 function useContentSection<T extends Record<string, any>>(key: string, fallback: T) {
