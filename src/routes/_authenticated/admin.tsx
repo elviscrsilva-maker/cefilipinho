@@ -320,13 +320,85 @@ function InstitutionalEditor() {
   const [toast, setToast] = useState<string | null>(null);
   useEffect(() => setForm(data), [data]);
   return (
-    <Card title="Institucional" description="Missão, visão, valores e histórico da unidade.">
+    <Card title="Institucional" description="Cabeçalho, missão, visão, valores, histórico e equipe de direção.">
+      <div className="grid gap-4 md:grid-cols-2">
+        <Field label="Etiqueta acima do título (hero)">
+          <TextInput value={form.hero_eyebrow} onChange={(e) => setForm({ ...form, hero_eyebrow: e.target.value })} />
+        </Field>
+        <Field label="Título do hero">
+          <TextInput value={form.hero_title} onChange={(e) => setForm({ ...form, hero_title: e.target.value })} />
+        </Field>
+      </div>
+      <Field label="Subtítulo / descrição do hero">
+        <TextArea value={form.hero_subtitle} onChange={(e) => setForm({ ...form, hero_subtitle: e.target.value })} />
+      </Field>
       <Field label="Missão"><TextArea value={form.mission} onChange={(e) => setForm({ ...form, mission: e.target.value })} /></Field>
       <Field label="Visão"><TextArea value={form.vision} onChange={(e) => setForm({ ...form, vision: e.target.value })} /></Field>
       <Field label="Valores"><TextArea value={form.values} onChange={(e) => setForm({ ...form, values: e.target.value })} /></Field>
       <Field label="Histórico / apresentação" hint="Texto livre (opcional).">
         <TextArea value={form.history} onChange={(e) => setForm({ ...form, history: e.target.value })} />
       </Field>
+
+      <div className="rounded-lg border border-border p-4">
+        <div className="flex items-center justify-between">
+          <div>
+            <div className="text-sm font-semibold text-primary">Direção & Coordenação</div>
+            <div className="text-xs text-muted-foreground">Cartões exibidos na página Institucional.</div>
+          </div>
+          <button
+            type="button"
+            onClick={() =>
+              setForm({
+                ...form,
+                leadership: [...(form.leadership ?? []), { role: "", name: "" }],
+              })
+            }
+            className="inline-flex items-center gap-1.5 rounded-md bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground hover:opacity-90"
+          >
+            <Plus className="h-3.5 w-3.5" /> Adicionar
+          </button>
+        </div>
+        <div className="mt-4 space-y-3">
+          {(form.leadership ?? []).map((m, idx) => (
+            <div key={idx} className="grid gap-2 md:grid-cols-[1fr_1fr_auto] items-end">
+              <Field label="Cargo">
+                <TextInput
+                  value={m.role}
+                  onChange={(e) => {
+                    const next = [...(form.leadership ?? [])];
+                    next[idx] = { ...next[idx], role: e.target.value };
+                    setForm({ ...form, leadership: next });
+                  }}
+                />
+              </Field>
+              <Field label="Nome">
+                <TextInput
+                  value={m.name}
+                  onChange={(e) => {
+                    const next = [...(form.leadership ?? [])];
+                    next[idx] = { ...next[idx], name: e.target.value };
+                    setForm({ ...form, leadership: next });
+                  }}
+                />
+              </Field>
+              <button
+                type="button"
+                onClick={() => {
+                  const next = (form.leadership ?? []).filter((_, i) => i !== idx);
+                  setForm({ ...form, leadership: next });
+                }}
+                className="inline-flex items-center gap-1.5 rounded-md border border-destructive/40 text-destructive px-3 py-2 text-xs hover:bg-destructive/10"
+              >
+                <Trash2 className="h-3.5 w-3.5" /> Remover
+              </button>
+            </div>
+          ))}
+          {(form.leadership ?? []).length === 0 && (
+            <p className="text-xs text-muted-foreground">Nenhum membro cadastrado.</p>
+          )}
+        </div>
+      </div>
+
       <SaveButton
         saving={saving}
         onClick={async () => {
