@@ -1,7 +1,14 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { SiteLayout } from "@/components/SiteLayout";
 import { Building2, Target, Eye, Heart, Award } from "lucide-react";
-import { useInstitutionalContent, useContactContent, useBrandingContent } from "@/lib/content";
+import { useInstitutionalContent, useContactContent, useBrandingContent, type TextAlign } from "@/lib/content";
+
+const ALIGN: Record<TextAlign, string> = {
+  left: "text-left",
+  center: "text-center mx-auto",
+  right: "text-right ml-auto",
+  justify: "text-justify",
+};
 
 const TITLE = "Institucional — Centro de Especialidades Filipinho";
 const DESC =
