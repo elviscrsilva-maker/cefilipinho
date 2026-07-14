@@ -14,6 +14,7 @@ import {
   type PodcastEpisode,
   type Specialty,
   type SpecialtyCategory,
+  type TextAlign,
 } from "@/lib/content";
 import {
   Loader2,
@@ -32,7 +33,12 @@ import {
   Palette,
   KeyRound,
   Stethoscope,
+  AlignLeft,
+  AlignCenter,
+  AlignRight,
+  AlignJustify,
 } from "lucide-react";
+
 
 export const Route = createFileRoute("/_authenticated/admin")({
   component: AdminPage,
@@ -223,6 +229,46 @@ function Toast({ text }: { text: string | null }) {
     </div>
   );
 }
+function AlignPicker({
+  label,
+  value,
+  onChange,
+}: {
+  label: string;
+  value: TextAlign;
+  onChange: (v: TextAlign) => void;
+}) {
+  const opts: { v: TextAlign; icon: typeof AlignLeft; title: string }[] = [
+    { v: "left", icon: AlignLeft, title: "Esquerda" },
+    { v: "center", icon: AlignCenter, title: "Centralizar" },
+    { v: "right", icon: AlignRight, title: "Direita" },
+    { v: "justify", icon: AlignJustify, title: "Justificar" },
+  ];
+  return (
+    <div>
+      <span className="text-xs font-semibold text-primary uppercase tracking-wider">{label}</span>
+      <div className="mt-1 inline-flex rounded-md border border-input bg-background overflow-hidden">
+        {opts.map((o) => {
+          const Icon = o.icon;
+          const active = value === o.v;
+          return (
+            <button
+              key={o.v}
+              type="button"
+              onClick={() => onChange(o.v)}
+              title={o.title}
+              className={`px-3 py-2 text-sm transition ${
+                active ? "bg-primary text-primary-foreground" : "text-foreground hover:bg-secondary"
+              }`}
+            >
+              <Icon className="h-4 w-4" />
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
 
 /* ---------- content section hook ---------- */
 function useContentSection<T extends Record<string, any>>(key: string, fallback: T) {
@@ -332,12 +378,27 @@ function InstitutionalEditor() {
       <Field label="Subtítulo / descrição do hero">
         <TextArea value={form.hero_subtitle} onChange={(e) => setForm({ ...form, hero_subtitle: e.target.value })} />
       </Field>
+      <AlignPicker
+        label="Alinhamento do subtítulo (hero)"
+        value={form.hero_align ?? "left"}
+        onChange={(v) => setForm({ ...form, hero_align: v })}
+      />
       <Field label="Missão"><TextArea value={form.mission} onChange={(e) => setForm({ ...form, mission: e.target.value })} /></Field>
       <Field label="Visão"><TextArea value={form.vision} onChange={(e) => setForm({ ...form, vision: e.target.value })} /></Field>
       <Field label="Valores"><TextArea value={form.values} onChange={(e) => setForm({ ...form, values: e.target.value })} /></Field>
+      <AlignPicker
+        label="Alinhamento dos cartões (missão/visão/valores)"
+        value={form.cards_align ?? "left"}
+        onChange={(v) => setForm({ ...form, cards_align: v })}
+      />
       <Field label="Histórico / apresentação" hint="Texto livre (opcional).">
         <TextArea value={form.history} onChange={(e) => setForm({ ...form, history: e.target.value })} />
       </Field>
+      <AlignPicker
+        label="Alinhamento do histórico"
+        value={form.history_align ?? "left"}
+        onChange={(v) => setForm({ ...form, history_align: v })}
+      />
 
       <div className="rounded-lg border border-border p-4">
         <div className="flex items-center justify-between">

@@ -1,7 +1,14 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { SiteLayout } from "@/components/SiteLayout";
 import { Building2, Target, Eye, Heart, Award } from "lucide-react";
-import { useInstitutionalContent, useContactContent, useBrandingContent } from "@/lib/content";
+import { useInstitutionalContent, useContactContent, useBrandingContent, type TextAlign } from "@/lib/content";
+
+const ALIGN: Record<TextAlign, string> = {
+  left: "text-left",
+  center: "text-center mx-auto",
+  right: "text-right ml-auto",
+  justify: "text-justify",
+};
 
 const TITLE = "Institucional — Centro de Especialidades Filipinho";
 const DESC =
@@ -37,7 +44,7 @@ function Sobre() {
           <h1 className="mt-4 font-display text-4xl md:text-5xl font-semibold">
             {i.hero_title}
           </h1>
-          <p className="mt-4 max-w-2xl text-primary-foreground/85 text-lg whitespace-pre-line">
+          <p className={`mt-4 max-w-2xl text-primary-foreground/85 text-lg whitespace-pre-line ${ALIGN[i.hero_align ?? "left"]}`}>
             {i.hero_subtitle}
           </p>
         </div>
@@ -54,7 +61,7 @@ function Sobre() {
               <card.icon className="h-5 w-5" />
             </div>
             <h2 className="font-display text-2xl text-primary font-semibold">{card.title}</h2>
-            <p className="mt-3 text-muted-foreground leading-relaxed whitespace-pre-line">{card.body}</p>
+            <p className={`mt-3 text-muted-foreground leading-relaxed whitespace-pre-line ${ALIGN[i.cards_align ?? "left"]}`}>{card.body}</p>
           </article>
         ))}
       </section>
@@ -63,7 +70,7 @@ function Sobre() {
         <section className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 pb-6">
           <div className="rounded-2xl border border-border bg-card p-8 shadow-card">
             <h2 className="font-display text-2xl text-primary font-semibold">Nossa história</h2>
-            <p className="mt-3 text-muted-foreground leading-relaxed whitespace-pre-line">{i.history}</p>
+            <p className={`mt-3 text-muted-foreground leading-relaxed whitespace-pre-line ${ALIGN[i.history_align ?? "left"]}`}>{i.history}</p>
           </div>
         </section>
       )}
