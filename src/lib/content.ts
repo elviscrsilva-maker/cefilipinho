@@ -97,6 +97,10 @@ export const DEFAULTS = {
     cta_secondary_href: "/contato",
   } as HomeContent,
   institutional: {
+    hero_eyebrow: "Institucional",
+    hero_title: "Sobre a unidade",
+    hero_subtitle:
+      "Atendimento ambulatorial e eletivo em 12 especialidades médicas e 6 não médicas, reunindo mais de 30 profissionais dedicados à saúde da população.",
     mission:
       "Em consonância com a SEMUS, oferecer com excelência atendimento multiprofissional de forma resolutiva e humanizada à população de São Luís.",
     vision:
@@ -104,6 +108,12 @@ export const DEFAULTS = {
     values:
       "Ética, respeito, acolhimento, humanização, excelência, resolutividade e satisfação do paciente.",
     history: "",
+    leadership: [
+      { role: "Direção", name: "Marcos Santos da Silva" },
+      { role: "Sup. Administrativa", name: "Elvis Silva" },
+      { role: "RT de Enfermagem", name: "Alcione Sodré" },
+      { role: "RT de Farmácia", name: "Silvia Botelho" },
+    ],
   } as InstitutionalContent,
   contact: {
     address: "Rua Vespasiano Ramos, 16 — CEP 65043-030, São Luís/MA",
