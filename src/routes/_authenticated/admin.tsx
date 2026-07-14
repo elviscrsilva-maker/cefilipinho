@@ -14,6 +14,7 @@ import {
   type PodcastEpisode,
   type Specialty,
   type SpecialtyCategory,
+  type TextAlign,
 } from "@/lib/content";
 import {
   Loader2,
