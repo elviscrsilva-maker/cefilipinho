@@ -12,11 +12,16 @@ export type HomeContent = {
   cta_secondary_href: string;
 };
 
+export type LeadershipMember = { role: string; name: string };
 export type InstitutionalContent = {
+  hero_eyebrow: string;
+  hero_title: string;
+  hero_subtitle: string;
   mission: string;
   vision: string;
   values: string;
   history: string;
+  leadership: LeadershipMember[];
 };
 
 export type ContactContent = {
