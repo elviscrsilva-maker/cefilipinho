@@ -33,7 +33,12 @@ import {
   Palette,
   KeyRound,
   Stethoscope,
+  AlignLeft,
+  AlignCenter,
+  AlignRight,
+  AlignJustify,
 } from "lucide-react";
+
 
 export const Route = createFileRoute("/_authenticated/admin")({
   component: AdminPage,
