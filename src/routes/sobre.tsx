@@ -44,7 +44,7 @@ function Sobre() {
           <h1 className="mt-4 font-display text-4xl md:text-5xl font-semibold">
             {i.hero_title}
           </h1>
-          <p className="mt-4 max-w-2xl text-primary-foreground/85 text-lg whitespace-pre-line">
+          <p className={`mt-4 max-w-2xl text-primary-foreground/85 text-lg whitespace-pre-line ${ALIGN[i.hero_align ?? "left"]}`}>
             {i.hero_subtitle}
           </p>
         </div>
