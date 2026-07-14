@@ -105,13 +105,16 @@ export const DEFAULTS = {
     hero_title: "Sobre a unidade",
     hero_subtitle:
       "Atendimento ambulatorial e eletivo em 12 especialidades médicas e 6 não médicas, reunindo mais de 30 profissionais dedicados à saúde da população.",
+    hero_align: "left",
     mission:
       "Em consonância com a SEMUS, oferecer com excelência atendimento multiprofissional de forma resolutiva e humanizada à população de São Luís.",
     vision:
       "Consolidar-se como referência no atendimento multiprofissional especializado junto à população de São Luís e municípios pactuados.",
     values:
       "Ética, respeito, acolhimento, humanização, excelência, resolutividade e satisfação do paciente.",
+    cards_align: "left",
     history: "",
+    history_align: "left",
     leadership: [
       { role: "Direção", name: "Marcos Santos da Silva" },
       { role: "Sup. Administrativa", name: "Elvis Silva" },
