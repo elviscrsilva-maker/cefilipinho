@@ -19,12 +19,6 @@ export const Route = createFileRoute("/sobre")({
   }),
 });
 
-const LEADERSHIP = [
-  { role: "Direção", name: "Marcos Santos da Silva" },
-  { role: "Sup. Administrativa", name: "Elvis Silva" },
-  { role: "RT de Enfermagem", name: "Alcione Sodré" },
-  { role: "RT de Farmácia", name: "Silvia Botelho" },
-];
 
 function Sobre() {
   const { data: inst } = useInstitutionalContent();
