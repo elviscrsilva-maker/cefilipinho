@@ -332,12 +332,27 @@ function InstitutionalEditor() {
       <Field label="Subtítulo / descrição do hero">
         <TextArea value={form.hero_subtitle} onChange={(e) => setForm({ ...form, hero_subtitle: e.target.value })} />
       </Field>
+      <AlignPicker
+        label="Alinhamento do subtítulo (hero)"
+        value={form.hero_align ?? "left"}
+        onChange={(v) => setForm({ ...form, hero_align: v })}
+      />
       <Field label="Missão"><TextArea value={form.mission} onChange={(e) => setForm({ ...form, mission: e.target.value })} /></Field>
       <Field label="Visão"><TextArea value={form.vision} onChange={(e) => setForm({ ...form, vision: e.target.value })} /></Field>
       <Field label="Valores"><TextArea value={form.values} onChange={(e) => setForm({ ...form, values: e.target.value })} /></Field>
+      <AlignPicker
+        label="Alinhamento dos cartões (missão/visão/valores)"
+        value={form.cards_align ?? "left"}
+        onChange={(v) => setForm({ ...form, cards_align: v })}
+      />
       <Field label="Histórico / apresentação" hint="Texto livre (opcional).">
         <TextArea value={form.history} onChange={(e) => setForm({ ...form, history: e.target.value })} />
       </Field>
+      <AlignPicker
+        label="Alinhamento do histórico"
+        value={form.history_align ?? "left"}
+        onChange={(v) => setForm({ ...form, history_align: v })}
+      />
 
       <div className="rounded-lg border border-border p-4">
         <div className="flex items-center justify-between">
