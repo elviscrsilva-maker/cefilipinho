@@ -13,14 +13,18 @@ export type HomeContent = {
 };
 
 export type LeadershipMember = { role: string; name: string };
+export type TextAlign = "left" | "center" | "right" | "justify";
 export type InstitutionalContent = {
   hero_eyebrow: string;
   hero_title: string;
   hero_subtitle: string;
+  hero_align: TextAlign;
   mission: string;
   vision: string;
   values: string;
+  cards_align: TextAlign;
   history: string;
+  history_align: TextAlign;
   leadership: LeadershipMember[];
 };
 
