@@ -38,14 +38,13 @@ function Sobre() {
       <section className="bg-gradient-hero text-primary-foreground">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-20">
           <div className="flex items-center gap-2 text-xs uppercase tracking-widest text-gold">
-            <Building2 className="h-4 w-4" /> Institucional
+            <Building2 className="h-4 w-4" /> {i.hero_eyebrow}
           </div>
           <h1 className="mt-4 font-display text-4xl md:text-5xl font-semibold">
-            Sobre a unidade
+            {i.hero_title}
           </h1>
-          <p className="mt-4 max-w-2xl text-primary-foreground/85 text-lg">
-            Atendimento ambulatorial e eletivo em 12 especialidades médicas e 6 não médicas,
-            reunindo mais de 30 profissionais dedicados à saúde da população.
+          <p className="mt-4 max-w-2xl text-primary-foreground/85 text-lg whitespace-pre-line">
+            {i.hero_subtitle}
           </p>
         </div>
       </section>
