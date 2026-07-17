@@ -63,7 +63,20 @@ export function SiteLayout({ children }: { children: ReactNode }) {
                 {n.label}
               </Link>
             ))}
+            {c.instagram_url && (
+              <a
+                href={c.instagram_url}
+                target="_blank"
+                rel="noreferrer"
+                className="ml-2 px-3 py-2 rounded-md text-sm font-medium text-primary hover:bg-secondary flex items-center gap-1.5"
+                aria-label="Instagram da unidade"
+              >
+                <Instagram className="h-4 w-4" />
+                <span className="hidden xl:inline">Instagram</span>
+              </a>
+            )}
           </nav>
+
           <button
             onClick={() => setOpen((v) => !v)}
             className="lg:hidden p-2 rounded-md text-primary hover:bg-secondary"
