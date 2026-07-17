@@ -122,6 +122,15 @@ export function SiteLayout({ children }: { children: ReactNode }) {
               <Clock className="h-4 w-4 text-gold" />
               <span>{c.hours}</span>
             </div>
+            {c.instagram_url && (
+              <div className="flex items-center gap-3">
+                <Instagram className="h-4 w-4 text-gold" />
+                <a href={c.instagram_url} target="_blank" rel="noreferrer" className="hover:underline">
+                  Instagram da unidade
+                </a>
+              </div>
+            )}
+
           </div>
           <div>
             <div className="text-sm font-semibold mb-3 text-gold">Navegação</div>
