@@ -182,7 +182,10 @@ async function fetchContent<T>(key: string, fallback: T): Promise<T> {
 export function useHomeContent() {
   return useQuery({
     queryKey: ["content", "home"],
-    queryFn: () => fetchContent("home", DEFAULTS.home),
+    queryFn: async () => {
+      const c = await fetchContent("home", DEFAULTS.home);
+      return { ...c, hero_image_url: await resolveStorageUrl(c.hero_image_url) };
+    },
     initialData: DEFAULTS.home,
   });
 }
@@ -203,7 +206,14 @@ export function useContactContent() {
 export function useBrandingContent() {
   return useQuery({
     queryKey: ["content", "branding"],
-    queryFn: () => fetchContent("branding", DEFAULTS.branding),
+    queryFn: async () => {
+      const c = await fetchContent("branding", DEFAULTS.branding);
+      return {
+        ...c,
+        logo_url: await resolveStorageUrl(c.logo_url),
+        footer_dev_logo_url: await resolveStorageUrl(c.footer_dev_logo_url),
+      };
+    },
     initialData: DEFAULTS.branding,
   });
 }
@@ -225,7 +235,14 @@ export function useMediaItems() {
         .eq("published", true)
         .order("sort_order", { ascending: true })
         .order("created_at", { ascending: false });
-      return (data ?? []) as MediaItem[];
+      const rows = (data ?? []) as MediaItem[];
+      return Promise.all(
+        rows.map(async (r) => ({
+          ...r,
+          url: await resolveStorageUrl(r.url),
+          thumbnail_url: r.thumbnail_url ? await resolveStorageUrl(r.thumbnail_url) : null,
+        })),
+      );
     },
     initialData: [] as MediaItem[],
   });
@@ -240,11 +257,19 @@ export function usePodcastEpisodes() {
         .select("*")
         .eq("published", true)
         .order("published_at", { ascending: false });
-      return (data ?? []) as PodcastEpisode[];
+      const rows = (data ?? []) as PodcastEpisode[];
+      return Promise.all(
+        rows.map(async (r) => ({
+          ...r,
+          cover_url: r.cover_url ? await resolveStorageUrl(r.cover_url) : null,
+          audio_url: r.audio_url ? await resolveStorageUrl(r.audio_url) : null,
+        })),
+      );
     },
     initialData: [] as PodcastEpisode[],
   });
 }
+
 
 export function useSpecialties() {
   return useQuery({
