@@ -161,7 +161,8 @@ export async function resolveStorageUrl(url: string | null | undefined): Promise
   try {
     const bucket = m[1];
     const path = decodeURIComponent(m[2]);
-    const { data } = await supabase.storage.from(bucket).createSignedUrl(path, 60 * 60 * 24 * 7);
+    // 100 anos — efetivamente permanente enquanto o arquivo existir no bucket
+    const { data } = await supabase.storage.from(bucket).createSignedUrl(path, 60 * 60 * 24 * 365 * 100);
     return data?.signedUrl ?? url;
   } catch {
     return url;
