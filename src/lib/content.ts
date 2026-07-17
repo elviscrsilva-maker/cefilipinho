@@ -35,7 +35,9 @@ export type ContactContent = {
   email: string;
   hours: string;
   map_embed_url: string;
+  instagram_url: string;
 };
+
 
 export type BrandingContent = {
   site_title: string;
