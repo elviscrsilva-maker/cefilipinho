@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
-import { Mail, MapPin, Phone, Clock, Menu, X } from "lucide-react";
+import { Mail, MapPin, Phone, Clock, Menu, X, Instagram } from "lucide-react";
 import { useState, type ReactNode } from "react";
+
 import logoFilipinhoAsset from "@/assets/logo-filipinho.png.asset.json";
 import logoElvisAsset from "@/assets/logo-elvis.jpeg.asset.json";
 import { useBrandingContent, useContactContent, useAppearanceContent } from "@/lib/content";
@@ -62,7 +63,20 @@ export function SiteLayout({ children }: { children: ReactNode }) {
                 {n.label}
               </Link>
             ))}
+            {c.instagram_url && (
+              <a
+                href={c.instagram_url}
+                target="_blank"
+                rel="noreferrer"
+                className="ml-2 px-3 py-2 rounded-md text-sm font-medium text-primary hover:bg-secondary flex items-center gap-1.5"
+                aria-label="Instagram da unidade"
+              >
+                <Instagram className="h-4 w-4" />
+                <span className="hidden xl:inline">Instagram</span>
+              </a>
+            )}
           </nav>
+
           <button
             onClick={() => setOpen((v) => !v)}
             className="lg:hidden p-2 rounded-md text-primary hover:bg-secondary"
@@ -121,6 +135,15 @@ export function SiteLayout({ children }: { children: ReactNode }) {
               <Clock className="h-4 w-4 text-gold" />
               <span>{c.hours}</span>
             </div>
+            {c.instagram_url && (
+              <div className="flex items-center gap-3">
+                <Instagram className="h-4 w-4 text-gold" />
+                <a href={c.instagram_url} target="_blank" rel="noreferrer" className="hover:underline">
+                  Instagram da unidade
+                </a>
+              </div>
+            )}
+
           </div>
           <div>
             <div className="text-sm font-semibold mb-3 text-gold">Navegação</div>

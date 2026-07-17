@@ -35,7 +35,9 @@ export type ContactContent = {
   email: string;
   hours: string;
   map_embed_url: string;
+  instagram_url: string;
 };
+
 
 export type BrandingContent = {
   site_title: string;
@@ -129,7 +131,9 @@ export const DEFAULTS = {
     email: "cemfilipinhoesp@gmail.com",
     hours: "Segunda a Sexta · 07h às 18h",
     map_embed_url: "",
+    instagram_url: "",
   } as ContactContent,
+
   branding: {
     site_title: "Centro de Especialidades Filipinho",
     tagline: "Qualidade e Excelência em cada Atendimento",
@@ -148,6 +152,22 @@ export const DEFAULTS = {
   } as AppearanceContent,
 };
 
+const STORAGE_URL_RE = /\/storage\/v1\/object\/(?:public|sign)\/([^/]+)\/([^?]+)/;
+
+export async function resolveStorageUrl(url: string | null | undefined): Promise<string> {
+  if (!url) return url ?? "";
+  const m = url.match(STORAGE_URL_RE);
+  if (!m) return url;
+  try {
+    const bucket = m[1];
+    const path = decodeURIComponent(m[2]);
+    const { data } = await supabase.storage.from(bucket).createSignedUrl(path, 60 * 60 * 24 * 7);
+    return data?.signedUrl ?? url;
+  } catch {
+    return url;
+  }
+}
+
 async function fetchContent<T>(key: string, fallback: T): Promise<T> {
   const { data } = await supabase
     .from("site_content")
@@ -158,10 +178,14 @@ async function fetchContent<T>(key: string, fallback: T): Promise<T> {
   return { ...fallback, ...(data.value as Partial<T>) };
 }
 
+
 export function useHomeContent() {
   return useQuery({
     queryKey: ["content", "home"],
-    queryFn: () => fetchContent("home", DEFAULTS.home),
+    queryFn: async () => {
+      const c = await fetchContent("home", DEFAULTS.home);
+      return { ...c, hero_image_url: await resolveStorageUrl(c.hero_image_url) };
+    },
     initialData: DEFAULTS.home,
   });
 }
@@ -182,7 +206,14 @@ export function useContactContent() {
 export function useBrandingContent() {
   return useQuery({
     queryKey: ["content", "branding"],
-    queryFn: () => fetchContent("branding", DEFAULTS.branding),
+    queryFn: async () => {
+      const c = await fetchContent("branding", DEFAULTS.branding);
+      return {
+        ...c,
+        logo_url: await resolveStorageUrl(c.logo_url),
+        footer_dev_logo_url: await resolveStorageUrl(c.footer_dev_logo_url),
+      };
+    },
     initialData: DEFAULTS.branding,
   });
 }
@@ -204,7 +235,14 @@ export function useMediaItems() {
         .eq("published", true)
         .order("sort_order", { ascending: true })
         .order("created_at", { ascending: false });
-      return (data ?? []) as MediaItem[];
+      const rows = (data ?? []) as MediaItem[];
+      return Promise.all(
+        rows.map(async (r) => ({
+          ...r,
+          url: await resolveStorageUrl(r.url),
+          thumbnail_url: r.thumbnail_url ? await resolveStorageUrl(r.thumbnail_url) : null,
+        })),
+      );
     },
     initialData: [] as MediaItem[],
   });
@@ -219,11 +257,19 @@ export function usePodcastEpisodes() {
         .select("*")
         .eq("published", true)
         .order("published_at", { ascending: false });
-      return (data ?? []) as PodcastEpisode[];
+      const rows = (data ?? []) as PodcastEpisode[];
+      return Promise.all(
+        rows.map(async (r) => ({
+          ...r,
+          cover_url: r.cover_url ? await resolveStorageUrl(r.cover_url) : null,
+          audio_url: r.audio_url ? await resolveStorageUrl(r.audio_url) : null,
+        })),
+      );
     },
     initialData: [] as PodcastEpisode[],
   });
 }
+
 
 export function useSpecialties() {
   return useQuery({
