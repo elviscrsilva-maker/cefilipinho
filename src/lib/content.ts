@@ -131,7 +131,9 @@ export const DEFAULTS = {
     email: "cemfilipinhoesp@gmail.com",
     hours: "Segunda a Sexta · 07h às 18h",
     map_embed_url: "",
+    instagram_url: "",
   } as ContactContent,
+
   branding: {
     site_title: "Centro de Especialidades Filipinho",
     tagline: "Qualidade e Excelência em cada Atendimento",
