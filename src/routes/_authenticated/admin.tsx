@@ -495,6 +495,10 @@ function ContactEditor() {
       <Field label="Mapa (URL do iframe do Google Maps)" hint="Cole aqui o link 'src' do iframe de compartilhamento do Google Maps.">
         <TextInput value={form.map_embed_url} onChange={(e) => setForm({ ...form, map_embed_url: e.target.value })} />
       </Field>
+      <Field label="Instagram da unidade (URL completa)" hint="Ex.: https://instagram.com/cefilipinho">
+        <TextInput value={form.instagram_url} onChange={(e) => setForm({ ...form, instagram_url: e.target.value })} />
+      </Field>
+
       <SaveButton
         saving={saving}
         onClick={async () => {
