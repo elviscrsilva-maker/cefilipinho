@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useState } from "react";
 import { SiteLayout } from "@/components/SiteLayout";
 import { Camera, Play, ImageIcon, ExternalLink } from "lucide-react";
 import { useMediaItems } from "@/lib/content";
