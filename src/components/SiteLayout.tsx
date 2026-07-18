@@ -72,7 +72,7 @@ export function SiteLayout({ children }: { children: ReactNode }) {
                 aria-label="Instagram da unidade"
               >
                 <Instagram className="h-4 w-4" />
-                <span className="hidden xl:inline">Instagram</span>
+                <span>Instagram</span>
               </a>
             )}
           </nav>
