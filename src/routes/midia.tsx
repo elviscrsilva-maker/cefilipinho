@@ -104,30 +104,9 @@ function Midia() {
           <p className="text-sm text-muted-foreground">Nenhum vídeo publicado ainda.</p>
         ) : (
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {videos.map((v) => {
-              const embed = embedVideoUrl(v.url);
-              return (
-                <article key={v.id} className="rounded-2xl overflow-hidden border border-border bg-card shadow-card">
-                  <div className="aspect-video bg-black">
-                    {embed ? (
-                      embed.match(/\.(mp4|webm|ogg)$/i) ? (
-                        <video src={embed} controls className="h-full w-full" poster={v.thumbnail_url || undefined} />
-                      ) : (
-                        <iframe src={embed} title={v.title} className="h-full w-full" allowFullScreen />
-                      )
-                    ) : (
-                      <a href={v.url} target="_blank" rel="noreferrer" className="h-full w-full grid place-items-center text-primary-foreground">
-                        <ExternalLink className="h-6 w-6" />
-                      </a>
-                    )}
-                  </div>
-                  <div className="p-5">
-                    <h3 className="font-display text-lg text-primary font-semibold">{v.title}</h3>
-                    {v.description && <p className="mt-1 text-sm text-muted-foreground">{v.description}</p>}
-                  </div>
-                </article>
-              );
-            })}
+            {videos.map((v) => (
+              <VideoCard key={v.id} v={v} />
+            ))}
           </div>
         )}
       </section>
