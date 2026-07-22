@@ -1038,7 +1038,7 @@ function HeaderEditor() {
         <Field label='Início'><TextInput value={form.nav_home} onChange={(e) => upd("nav_home", e.target.value)} /></Field>
         <Field label='Institucional'><TextInput value={form.nav_sobre} onChange={(e) => upd("nav_sobre", e.target.value)} /></Field>
         <Field label='Especialidades'><TextInput value={form.nav_especialidades} onChange={(e) => upd("nav_especialidades", e.target.value)} /></Field>
-        <Field label='Mídia'><TextInput value={form.nav_midia} onChange={(e) => upd("nav_midia", e.target.value)} /></Field>
+        <Field label='Projetos e Instrumento de Gestão'><TextInput value={form.nav_midia} onChange={(e) => upd("nav_midia", e.target.value)} /></Field>
         <Field label='Podcast'><TextInput value={form.nav_podcast} onChange={(e) => upd("nav_podcast", e.target.value)} /></Field>
         <Field label='Contato'><TextInput value={form.nav_contato} onChange={(e) => upd("nav_contato", e.target.value)} /></Field>
       </div>
