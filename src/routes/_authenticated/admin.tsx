@@ -63,8 +63,7 @@ type Tab =
   | "especialidades"
   | "profissionais"
   | "aparencia"
-  | "midia"
-  | "albuns"
+  | "projetos"
   | "podcast"
   | "conta";
 
@@ -79,8 +78,7 @@ const TABS: { id: Tab; label: string; icon: typeof Home }[] = [
   { id: "especialidades", label: "Especialidades e Exames", icon: Stethoscope },
   { id: "profissionais", label: "Profissionais por Especialidade", icon: Users },
   { id: "aparencia", label: "Aparência (cores/fontes)", icon: Palette },
-  { id: "midia", label: "Mídia (Fotos/Vídeos)", icon: ImageIcon },
-  { id: "albuns", label: "Álbuns de fotos", icon: FolderOpen },
+  { id: "projetos", label: "Projetos e Instrumento de Gestão", icon: FolderOpen },
   { id: "podcast", label: "Podcast", icon: Mic },
   { id: "conta", label: "Minha Conta", icon: KeyRound },
 ];
