@@ -654,7 +654,16 @@ function MediaEditor() {
                 placeholder={it.kind === "photo" ? "URL da imagem ou envie o arquivo" : "URL do vídeo (YouTube/Vimeo) ou envie"}
               />
               {it.kind === "video" && (
-                <TextInput defaultValue={it.thumbnail_url ?? ""} placeholder="URL da miniatura (opcional)" onBlur={(e) => updateItem(it.id, { thumbnail_url: e.target.value })} />
+                <div>
+                  <label className="block text-xs text-primary font-semibold uppercase tracking-wider mb-1">Miniatura / capa do vídeo</label>
+                  <UploadOrUrl
+                    bucket="media"
+                    value={it.thumbnail_url ?? ""}
+                    onChange={(v) => updateItem(it.id, { thumbnail_url: v })}
+                    accept="image/*"
+                    placeholder="URL da imagem ou envie uma capa"
+                  />
+                </div>
               )}
               {it.kind === "photo" && (
                 <label className="text-xs">
