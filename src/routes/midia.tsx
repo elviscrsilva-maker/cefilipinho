@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { SiteLayout } from "@/components/SiteLayout";
-import { Camera, Play, ExternalLink, ChevronLeft, FolderOpen, X } from "lucide-react";
+import { Camera, Play, ChevronLeft, FolderOpen, X } from "lucide-react";
 import { useMediaItems, usePhotoAlbums, type MediaItem, type PhotoAlbum } from "@/lib/content";
 
 const TITLE = "Mídia — Centro de Especialidades Filipinho";
