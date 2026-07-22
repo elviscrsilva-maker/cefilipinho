@@ -45,8 +45,8 @@ function EventModal({ ev, onClose }: { ev: EventItem; onClose: () => void }) {
           <X className="h-5 w-5" />
         </button>
         {ev.cover_url && (
-          <div className="aspect-video bg-secondary">
-            <img src={ev.cover_url} alt={ev.title} className="h-full w-full object-cover" />
+          <div className="bg-black flex items-center justify-center max-h-[70vh]">
+            <img src={ev.cover_url} alt={ev.title} className="max-h-[70vh] w-auto max-w-full object-contain" />
           </div>
         )}
         <div className="p-6 md:p-8 overflow-y-auto">
