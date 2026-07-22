@@ -654,7 +654,16 @@ function MediaEditor() {
                 placeholder={it.kind === "photo" ? "URL da imagem ou envie o arquivo" : "URL do vídeo (YouTube/Vimeo) ou envie"}
               />
               {it.kind === "video" && (
-                <TextInput defaultValue={it.thumbnail_url ?? ""} placeholder="URL da miniatura (opcional)" onBlur={(e) => updateItem(it.id, { thumbnail_url: e.target.value })} />
+                <div>
+                  <label className="block text-xs text-primary font-semibold uppercase tracking-wider mb-1">Miniatura / capa do vídeo</label>
+                  <UploadOrUrl
+                    bucket="media"
+                    value={it.thumbnail_url ?? ""}
+                    onChange={(v) => updateItem(it.id, { thumbnail_url: v })}
+                    accept="image/*"
+                    placeholder="URL da imagem ou envie uma capa"
+                  />
+                </div>
               )}
               {it.kind === "photo" && (
                 <label className="text-xs">
@@ -1297,8 +1306,24 @@ function AlbumsEditor() {
       return (data ?? []) as PhotoAlbum[];
     },
   });
+  const { data: countsMap = {} } = useQuery({
+    queryKey: ["admin_albums_counts"],
+    queryFn: async (): Promise<Record<string, number>> => {
+      const { data } = await supabase.from("media_items").select("album_id").eq("kind", "photo");
+      const map: Record<string, number> = {};
+      (data ?? []).forEach((r: any) => { if (r.album_id) map[r.album_id] = (map[r.album_id] ?? 0) + 1; });
+      return map;
+    },
+  });
   const [toast, setToast] = useState<string | null>(null);
-  const invalidate = () => { qc.invalidateQueries({ queryKey: ["photo_albums"] }); refetch(); };
+  const [uploadingId, setUploadingId] = useState<string | null>(null);
+  const [progress, setProgress] = useState<{ done: number; total: number } | null>(null);
+  const invalidate = () => {
+    qc.invalidateQueries({ queryKey: ["photo_albums"] });
+    qc.invalidateQueries({ queryKey: ["media_items"] });
+    qc.invalidateQueries({ queryKey: ["admin_albums_counts"] });
+    refetch();
+  };
   async function add() {
     const { error } = await (supabase as any).from("photo_albums").insert({ name: "Novo álbum", sort_order: items.length + 1 });
     if (error) return setToast("Erro: " + error.message);
@@ -1314,6 +1339,33 @@ function AlbumsEditor() {
     const { error } = await (supabase as any).from("photo_albums").delete().eq("id", id);
     if (error) return setToast("Erro: " + error.message);
     invalidate();
+  }
+  async function bulkUpload(albumId: string, files: FileList) {
+    setUploadingId(albumId);
+    const total = files.length;
+    setProgress({ done: 0, total });
+    let done = 0;
+    for (const file of Array.from(files)) {
+      const path = `${Date.now()}-${Math.random().toString(36).slice(2, 7)}-${file.name.replace(/[^a-zA-Z0-9.\-_]/g, "_")}`;
+      const up = await supabase.storage.from("media").upload(path, file, { upsert: false });
+      if (!up.error) {
+        const { data } = supabase.storage.from("media").getPublicUrl(path);
+        await supabase.from("media_items").insert({
+          kind: "photo",
+          title: file.name.replace(/\.[^.]+$/, ""),
+          url: data.publicUrl,
+          album_id: albumId,
+          published: true,
+          sort_order: done + 1,
+        });
+      }
+      done += 1;
+      setProgress({ done, total });
+    }
+    setUploadingId(null);
+    setProgress(null);
+    invalidate();
+    setToast(`${done} foto(s) enviada(s) ao álbum.`);
   }
   return (
     <Card title="Álbuns de fotos" description="Crie álbuns/pastas para organizar a galeria. Depois, na aba 'Mídia', escolha o álbum de cada foto.">
@@ -1334,6 +1386,30 @@ function AlbumsEditor() {
               </div>
             </div>
             <Field label="Capa"><UploadOrUrl bucket="media" value={a.cover_url ?? ""} onChange={(v) => upd(a.id, { cover_url: v })} accept="image/*" /></Field>
+
+            <div className="rounded-md border border-dashed border-primary/40 bg-primary/5 p-3">
+              <div className="flex items-center justify-between gap-3 flex-wrap">
+                <div className="text-xs">
+                  <div className="font-semibold text-primary uppercase tracking-wider">Enviar pasta inteira de fotos</div>
+                  <div className="text-muted-foreground mt-0.5">
+                    Selecione várias imagens de uma vez — todas serão publicadas neste álbum. Fotos atuais: <strong>{countsMap[a.id] ?? 0}</strong>.
+                  </div>
+                </div>
+                <label className="cursor-pointer inline-flex items-center gap-2 rounded-md bg-primary px-3 py-2 text-sm text-primary-foreground hover:brightness-110">
+                  {uploadingId === a.id ? <Loader2 className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4" />}
+                  {uploadingId === a.id && progress ? `Enviando ${progress.done}/${progress.total}…` : "Enviar várias fotos"}
+                  <input
+                    type="file"
+                    accept="image/*"
+                    multiple
+                    className="hidden"
+                    disabled={uploadingId === a.id}
+                    onChange={(e) => { if (e.target.files && e.target.files.length) bulkUpload(a.id, e.target.files); e.currentTarget.value = ""; }}
+                  />
+                </label>
+              </div>
+            </div>
+
             <div className="grid gap-3 md:grid-cols-2 items-center">
               <Field label="Ordem"><TextInput type="number" defaultValue={a.sort_order} onBlur={(e) => upd(a.id, { sort_order: Number(e.target.value) || 0 })} /></Field>
               <div className="flex items-center justify-between">

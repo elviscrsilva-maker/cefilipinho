@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { SiteLayout } from "@/components/SiteLayout";
-import { Camera, Play, ExternalLink, ChevronLeft, FolderOpen, X } from "lucide-react";
+import { Camera, Play, ChevronLeft, FolderOpen, X } from "lucide-react";
 import { useMediaItems, usePhotoAlbums, type MediaItem, type PhotoAlbum } from "@/lib/content";
 
 const TITLE = "Mídia — Centro de Especialidades Filipinho";
@@ -39,30 +39,38 @@ function VideoCard({ v }: { v: MediaItem }) {
   const isFile = embed?.match(/\.(mp4|webm|ogg)$/i);
   const poster = v.thumbnail_url || youtubeThumb(v.url) || undefined;
 
+  const PosterOverlay = (
+    <>
+      {poster ? (
+        <img src={poster} alt={v.title} className="absolute inset-0 h-full w-full object-cover" />
+      ) : isFile ? (
+        <video src={embed!} preload="metadata" muted playsInline className="absolute inset-0 h-full w-full object-cover pointer-events-none" />
+      ) : (
+        <div className="absolute inset-0 bg-gradient-hero" />
+      )}
+      <div className="absolute inset-0 bg-black/25 group-hover:bg-black/15 transition grid place-items-center">
+        <div className="h-16 w-16 rounded-full bg-gold text-primary grid place-items-center shadow-elegant group-hover:scale-105 transition">
+          <Play className="h-7 w-7 ml-1" fill="currentColor" />
+        </div>
+      </div>
+    </>
+  );
+
   return (
     <article className="rounded-2xl overflow-hidden border border-border bg-card shadow-card">
       <div className="aspect-video bg-black relative">
-        {!embed ? (
-          <a href={v.url} target="_blank" rel="noreferrer" className="h-full w-full grid place-items-center text-primary-foreground">
-            <ExternalLink className="h-6 w-6" />
-          </a>
-        ) : isFile ? (
-          <video src={embed} controls className="h-full w-full" poster={poster} />
-        ) : playing ? (
+        {isFile && playing ? (
+          <video src={embed!} controls autoPlay className="h-full w-full" poster={poster} />
+        ) : embed && !isFile && playing ? (
           <iframe src={embed} title={v.title} className="h-full w-full" allowFullScreen allow="autoplay; encrypted-media" />
-        ) : (
+        ) : embed ? (
           <button type="button" onClick={() => setPlaying(true)} className="group h-full w-full relative" aria-label={`Reproduzir ${v.title}`}>
-            {poster ? (
-              <img src={poster} alt={v.title} className="absolute inset-0 h-full w-full object-cover" />
-            ) : (
-              <div className="absolute inset-0 bg-gradient-hero" />
-            )}
-            <div className="absolute inset-0 bg-black/30 group-hover:bg-black/20 transition grid place-items-center">
-              <div className="h-16 w-16 rounded-full bg-gold text-primary grid place-items-center shadow-elegant group-hover:scale-105 transition">
-                <Play className="h-7 w-7 ml-1" fill="currentColor" />
-              </div>
-            </div>
+            {PosterOverlay}
           </button>
+        ) : (
+          <a href={v.url} target="_blank" rel="noreferrer" className="group h-full w-full relative block" aria-label={`Abrir ${v.title}`}>
+            {PosterOverlay}
+          </a>
         )}
       </div>
       <div className="p-5">
