@@ -206,7 +206,10 @@ export const DEFAULTS = {
     nav_midia: "Mídia",
     nav_podcast: "Podcast",
     nav_contato: "Contato",
+    bg_color: "",
+    text_color: "",
   } as HeaderContent,
+
 };
 
 const STORAGE_URL_RE = /\/storage\/v1\/object\/(?:public|sign)\/([^/]+)\/([^?]+)/;
