@@ -185,8 +185,7 @@ function AdminPage() {
           {tab === "especialidades" && <SpecialtiesEditor />}
           {tab === "profissionais" && <ProfessionalsEditor />}
           {tab === "aparencia" && <AppearanceEditor />}
-          {tab === "midia" && <MediaEditor />}
-          {tab === "albuns" && <AlbumsEditor />}
+          {tab === "projetos" && <ProjectsEditor />}
           {tab === "podcast" && <PodcastEditor />}
           {tab === "conta" && <AccountEditor />}
         </main>
