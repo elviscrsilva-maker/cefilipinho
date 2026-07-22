@@ -143,6 +143,16 @@ export type PhotoAlbum = {
   sort_order: number;
   published: boolean;
 };
+export type Project = {
+  id: string;
+  title: string;
+  description: string | null;
+  cover_url: string | null;
+  link_url: string | null;
+  sort_order: number;
+  published: boolean;
+};
+
 
 export const DEFAULTS = {
   home: {
@@ -203,7 +213,7 @@ export const DEFAULTS = {
     nav_home: "Início",
     nav_sobre: "Institucional",
     nav_especialidades: "Especialidades",
-    nav_midia: "Mídia",
+    nav_midia: "Projetos e Instrumento de Gestão",
     nav_podcast: "Podcast",
     nav_contato: "Contato",
     bg_color: "",
@@ -425,5 +435,23 @@ export function usePhotoAlbums() {
       );
     },
     initialData: [] as PhotoAlbum[],
+  });
+}
+
+export function useProjects() {
+  return useQuery({
+    queryKey: ["projects"],
+    queryFn: async (): Promise<Project[]> => {
+      const { data } = await (supabase as any)
+        .from("projects")
+        .select("*")
+        .eq("published", true)
+        .order("sort_order");
+      const rows = (data ?? []) as Project[];
+      return Promise.all(
+        rows.map(async (r) => ({ ...r, cover_url: r.cover_url ? await resolveStorageUrl(r.cover_url) : null })),
+      );
+    },
+    initialData: [] as Project[],
   });
 }
