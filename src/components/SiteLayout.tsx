@@ -65,8 +65,17 @@ export function SiteLayout({ children }: { children: ReactNode }) {
               <Link
                 key={n.to}
                 to={n.to}
-                activeProps={{ className: "text-primary bg-gold font-semibold shadow-sm ring-1 ring-gold/70" }}
-                inactiveProps={{ className: "text-muted-foreground hover:text-primary hover:bg-secondary/60" }}
+                activeProps={{
+                  className: "font-semibold shadow-sm ring-1 ring-gold/70",
+                  style: {
+                    color: h.nav_active_text_color || undefined,
+                    backgroundColor: h.nav_active_bg_color || undefined,
+                  },
+                }}
+                inactiveProps={{
+                  className: "hover:bg-secondary/60",
+                  style: { color: h.nav_link_color || h.text_color || undefined },
+                }}
                 className="px-4 py-2 rounded-md text-sm transition-colors"
               >
                 {n.label}
@@ -77,7 +86,8 @@ export function SiteLayout({ children }: { children: ReactNode }) {
                 href={c.instagram_url}
                 target="_blank"
                 rel="noreferrer"
-                className="ml-2 px-3 py-2 rounded-md text-sm font-medium text-primary hover:bg-secondary flex items-center gap-1.5"
+                className="ml-2 px-3 py-2 rounded-md text-sm font-medium hover:bg-secondary flex items-center gap-1.5"
+                style={{ color: h.nav_link_color || h.text_color || undefined }}
                 aria-label="Instagram da unidade"
               >
                 <Instagram className="h-4 w-4" />
@@ -85,6 +95,7 @@ export function SiteLayout({ children }: { children: ReactNode }) {
               </a>
             )}
           </nav>
+
 
           <button
             onClick={() => setOpen((v) => !v)}
