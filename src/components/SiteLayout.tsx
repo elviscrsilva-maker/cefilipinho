@@ -39,7 +39,7 @@ export function SiteLayout({ children }: { children: ReactNode }) {
     { to: "/", label: h.nav_home },
     { to: "/sobre", label: h.nav_sobre },
     { to: "/especialidades", label: h.nav_especialidades },
-    { to: "/midia", label: h.nav_midia },
+    { to: "/projetos", label: h.nav_midia },
     { to: "/podcast", label: h.nav_podcast },
     { to: "/contato", label: h.nav_contato },
   ] as const;

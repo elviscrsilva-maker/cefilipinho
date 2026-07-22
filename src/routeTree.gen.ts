@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SobreRouteImport } from './routes/sobre'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as ProjetosRouteImport } from './routes/projetos'
 import { Route as PodcastRouteImport } from './routes/podcast'
 import { Route as EspecialidadesRouteImport } from './routes/especialidades'
 import { Route as ContatoRouteImport } from './routes/contato'
@@ -27,6 +28,11 @@ const SobreRoute = SobreRouteImport.update({
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
   path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProjetosRoute = ProjetosRouteImport.update({
+  id: '/projetos',
+  path: '/projetos',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PodcastRoute = PodcastRouteImport.update({
@@ -70,6 +76,7 @@ export interface FileRoutesByFullPath {
   '/contato': typeof ContatoRoute
   '/especialidades': typeof EspecialidadesRoute
   '/podcast': typeof PodcastRoute
+  '/projetos': typeof ProjetosRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/sobre': typeof SobreRoute
   '/admin': typeof AuthenticatedAdminRoute
@@ -80,6 +87,7 @@ export interface FileRoutesByTo {
   '/contato': typeof ContatoRoute
   '/especialidades': typeof EspecialidadesRoute
   '/podcast': typeof PodcastRoute
+  '/projetos': typeof ProjetosRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/sobre': typeof SobreRoute
   '/admin': typeof AuthenticatedAdminRoute
@@ -92,6 +100,7 @@ export interface FileRoutesById {
   '/contato': typeof ContatoRoute
   '/especialidades': typeof EspecialidadesRoute
   '/podcast': typeof PodcastRoute
+  '/projetos': typeof ProjetosRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/sobre': typeof SobreRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
@@ -104,6 +113,7 @@ export interface FileRouteTypes {
     | '/contato'
     | '/especialidades'
     | '/podcast'
+    | '/projetos'
     | '/sitemap.xml'
     | '/sobre'
     | '/admin'
@@ -114,6 +124,7 @@ export interface FileRouteTypes {
     | '/contato'
     | '/especialidades'
     | '/podcast'
+    | '/projetos'
     | '/sitemap.xml'
     | '/sobre'
     | '/admin'
@@ -125,6 +136,7 @@ export interface FileRouteTypes {
     | '/contato'
     | '/especialidades'
     | '/podcast'
+    | '/projetos'
     | '/sitemap.xml'
     | '/sobre'
     | '/_authenticated/admin'
@@ -137,6 +149,7 @@ export interface RootRouteChildren {
   ContatoRoute: typeof ContatoRoute
   EspecialidadesRoute: typeof EspecialidadesRoute
   PodcastRoute: typeof PodcastRoute
+  ProjetosRoute: typeof ProjetosRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   SobreRoute: typeof SobreRoute
 }
@@ -155,6 +168,13 @@ declare module '@tanstack/react-router' {
       path: '/sitemap.xml'
       fullPath: '/sitemap.xml'
       preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/projetos': {
+      id: '/projetos'
+      path: '/projetos'
+      fullPath: '/projetos'
+      preLoaderRoute: typeof ProjetosRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/podcast': {
@@ -227,6 +247,7 @@ const rootRouteChildren: RootRouteChildren = {
   ContatoRoute: ContatoRoute,
   EspecialidadesRoute: EspecialidadesRoute,
   PodcastRoute: PodcastRoute,
+  ProjetosRoute: ProjetosRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   SobreRoute: SobreRoute,
 }
