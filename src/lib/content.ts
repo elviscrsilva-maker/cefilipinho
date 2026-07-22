@@ -143,6 +143,16 @@ export type PhotoAlbum = {
   sort_order: number;
   published: boolean;
 };
+export type Project = {
+  id: string;
+  title: string;
+  description: string | null;
+  cover_url: string | null;
+  link_url: string | null;
+  sort_order: number;
+  published: boolean;
+};
+
 
 export const DEFAULTS = {
   home: {
