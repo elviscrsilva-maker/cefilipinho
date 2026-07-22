@@ -42,6 +42,9 @@ import {
   AlignCenter,
   AlignRight,
   AlignJustify,
+  Calendar,
+  Users,
+  FolderOpen,
 } from "lucide-react";
 
 
