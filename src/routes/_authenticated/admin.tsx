@@ -978,3 +978,341 @@ function AppearanceEditor() {
     </Card>
   );
 }
+
+/* ---------- HEADER ---------- */
+function HeaderEditor() {
+  const { data, save } = useContentSection<HeaderContent>("header", DEFAULTS.header);
+  const [form, setForm] = useState<HeaderContent>(data);
+  const [saving, setSaving] = useState(false);
+  const [toast, setToast] = useState<string | null>(null);
+  useEffect(() => setForm(data), [data]);
+  const upd = (k: keyof HeaderContent, v: string) => setForm({ ...form, [k]: v });
+  return (
+    <Card title="Cabeçalho / Menu" description="Rótulos dos itens de menu do cabeçalho. A logo é editada na aba 'Marca e Rodapé', e as cores na aba 'Aparência'.">
+      <div className="grid gap-4 md:grid-cols-2">
+        <Field label='Início'><TextInput value={form.nav_home} onChange={(e) => upd("nav_home", e.target.value)} /></Field>
+        <Field label='Institucional'><TextInput value={form.nav_sobre} onChange={(e) => upd("nav_sobre", e.target.value)} /></Field>
+        <Field label='Especialidades'><TextInput value={form.nav_especialidades} onChange={(e) => upd("nav_especialidades", e.target.value)} /></Field>
+        <Field label='Mídia'><TextInput value={form.nav_midia} onChange={(e) => upd("nav_midia", e.target.value)} /></Field>
+        <Field label='Podcast'><TextInput value={form.nav_podcast} onChange={(e) => upd("nav_podcast", e.target.value)} /></Field>
+        <Field label='Contato'><TextInput value={form.nav_contato} onChange={(e) => upd("nav_contato", e.target.value)} /></Field>
+      </div>
+      <SaveButton saving={saving} onClick={async () => {
+        setSaving(true);
+        try { await save(form); setToast("Alterações salvas!"); setTimeout(() => setToast(null), 2500); }
+        catch (e: any) { setToast("Erro: " + e.message); } finally { setSaving(false); }
+      }} />
+      <Toast text={toast} />
+    </Card>
+  );
+}
+
+/* ---------- EVENTS ---------- */
+function EventsEditor() {
+  const qc = useQueryClient();
+  const { data: items = [], refetch } = useQuery({
+    queryKey: ["admin_events"],
+    queryFn: async (): Promise<EventItem[]> => {
+      const { data } = await (supabase as any).from("events").select("*").order("sort_order").order("event_date", { ascending: false });
+      return (data ?? []) as EventItem[];
+    },
+  });
+  const [toast, setToast] = useState<string | null>(null);
+  const invalidate = () => { qc.invalidateQueries({ queryKey: ["events"] }); refetch(); };
+  async function add() {
+    if (items.length >= 5) return setToast("Limite de 5 eventos atingido. Remova um antes de adicionar outro.");
+    const { error } = await (supabase as any).from("events").insert({ title: "Novo evento", sort_order: items.length + 1 });
+    if (error) return setToast("Erro: " + error.message);
+    refetch();
+  }
+  async function upd(id: string, patch: Partial<EventItem>) {
+    const { error } = await (supabase as any).from("events").update(patch).eq("id", id);
+    if (error) return setToast("Erro: " + error.message);
+    invalidate();
+  }
+  async function del(id: string) {
+    if (!confirm("Excluir este evento?")) return;
+    const { error } = await (supabase as any).from("events").delete().eq("id", id);
+    if (error) return setToast("Erro: " + error.message);
+    invalidate();
+  }
+  return (
+    <Card title="Eventos & Notícias" description="Quadro rolante exibido no topo da página inicial. Máximo de 5 itens.">
+      <button onClick={add} disabled={items.length >= 5} className="inline-flex items-center gap-2 rounded-md bg-primary px-3 py-2 text-sm text-primary-foreground disabled:opacity-50">
+        <Plus className="h-4 w-4" /> Novo evento ({items.length}/5)
+      </button>
+      <div className="space-y-4">
+        {items.length === 0 && <p className="text-sm text-muted-foreground">Nenhum evento cadastrado.</p>}
+        {items.map((ev) => (
+          <div key={ev.id} className="rounded-lg border border-border p-4 grid gap-3">
+            <div className="grid gap-3 md:grid-cols-[140px_1fr]">
+              <div className="h-28 w-full bg-secondary rounded-md overflow-hidden grid place-items-center">
+                {ev.cover_url ? <img src={ev.cover_url} alt="" className="h-full w-full object-cover" /> : <Calendar className="h-6 w-6 text-muted-foreground" />}
+              </div>
+              <div className="grid gap-2">
+                <TextInput defaultValue={ev.title} placeholder="Título" onBlur={(e) => upd(ev.id, { title: e.target.value })} />
+                <TextArea defaultValue={ev.description ?? ""} placeholder="Descrição" onBlur={(e) => upd(ev.id, { description: e.target.value })} />
+              </div>
+            </div>
+            <div className="grid gap-3 md:grid-cols-3">
+              <Field label="Data"><TextInput type="date" defaultValue={ev.event_date ?? ""} onBlur={(e) => upd(ev.id, { event_date: e.target.value || null })} /></Field>
+              <Field label="Ordem"><TextInput type="number" defaultValue={ev.sort_order} onBlur={(e) => upd(ev.id, { sort_order: Number(e.target.value) || 0 })} /></Field>
+              <Field label="Link externo (opcional)"><TextInput defaultValue={ev.external_url ?? ""} placeholder="https://..." onBlur={(e) => upd(ev.id, { external_url: e.target.value || null })} /></Field>
+            </div>
+            <Field label="Capa"><UploadOrUrl bucket="media" value={ev.cover_url ?? ""} onChange={(v) => upd(ev.id, { cover_url: v })} accept="image/*" /></Field>
+            <div className="flex items-center justify-between">
+              <label className="flex items-center gap-2 text-xs">
+                <input type="checkbox" checked={ev.published} onChange={(e) => upd(ev.id, { published: e.target.checked })} />
+                Publicado
+              </label>
+              <button onClick={() => del(ev.id)} className="text-destructive hover:bg-destructive/10 rounded-md p-2" aria-label="Excluir">
+                <Trash2 className="h-4 w-4" />
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+      <Toast text={toast} />
+    </Card>
+  );
+}
+
+/* ---------- TEAM (Direção & Coordenação) ---------- */
+function TeamEditor() {
+  const qc = useQueryClient();
+  const { data: items = [], refetch } = useQuery({
+    queryKey: ["admin_team"],
+    queryFn: async (): Promise<TeamMember[]> => {
+      const { data } = await (supabase as any).from("team_members").select("*").order("sort_order");
+      return (data ?? []) as TeamMember[];
+    },
+  });
+  const [toast, setToast] = useState<string | null>(null);
+  const invalidate = () => { qc.invalidateQueries({ queryKey: ["team_members"] }); refetch(); };
+  async function add() {
+    const { error } = await (supabase as any).from("team_members").insert({ name: "Novo profissional", role: "Cargo", sort_order: items.length + 1 });
+    if (error) return setToast("Erro: " + error.message);
+    refetch();
+  }
+  async function upd(id: string, patch: Partial<TeamMember>) {
+    const { error } = await (supabase as any).from("team_members").update(patch).eq("id", id);
+    if (error) return setToast("Erro: " + error.message);
+    invalidate();
+  }
+  async function del(id: string) {
+    if (!confirm("Excluir este profissional?")) return;
+    const { error } = await (supabase as any).from("team_members").delete().eq("id", id);
+    if (error) return setToast("Erro: " + error.message);
+    invalidate();
+  }
+  return (
+    <Card title="Direção & Coordenação" description="Cartões exibidos na página Institucional. Foto + cargo + nome + mini currículo.">
+      <button onClick={add} className="inline-flex items-center gap-2 rounded-md bg-primary px-3 py-2 text-sm text-primary-foreground">
+        <Plus className="h-4 w-4" /> Adicionar profissional
+      </button>
+      <div className="space-y-4">
+        {items.length === 0 && <p className="text-sm text-muted-foreground">Nenhum profissional cadastrado.</p>}
+        {items.map((m) => (
+          <div key={m.id} className="rounded-lg border border-border p-4 grid gap-3">
+            <div className="grid gap-3 md:grid-cols-[140px_1fr]">
+              <div className="h-32 w-full bg-secondary rounded-md overflow-hidden grid place-items-center">
+                {m.photo_url ? <img src={m.photo_url} alt="" className="h-full w-full object-cover" /> : <Users className="h-6 w-6 text-muted-foreground" />}
+              </div>
+              <div className="grid gap-2">
+                <TextInput defaultValue={m.name} placeholder="Nome" onBlur={(e) => upd(m.id, { name: e.target.value })} />
+                <TextInput defaultValue={m.role} placeholder="Cargo" onBlur={(e) => upd(m.id, { role: e.target.value })} />
+              </div>
+            </div>
+            <Field label="Foto"><UploadOrUrl bucket="media" value={m.photo_url ?? ""} onChange={(v) => upd(m.id, { photo_url: v })} accept="image/*" /></Field>
+            <Field label="Currículo / biografia (aparece ao clicar no cartão)">
+              <TextArea defaultValue={m.bio ?? ""} placeholder="Formação, atuação, especializações..." onBlur={(e) => upd(m.id, { bio: e.target.value })} />
+            </Field>
+            <div className="grid gap-3 md:grid-cols-2 items-center">
+              <Field label="Ordem"><TextInput type="number" defaultValue={m.sort_order} onBlur={(e) => upd(m.id, { sort_order: Number(e.target.value) || 0 })} /></Field>
+              <div className="flex items-center justify-between">
+                <label className="flex items-center gap-2 text-xs">
+                  <input type="checkbox" checked={m.published} onChange={(e) => upd(m.id, { published: e.target.checked })} />
+                  Publicado
+                </label>
+                <button onClick={() => del(m.id)} className="text-destructive hover:bg-destructive/10 rounded-md p-2" aria-label="Excluir">
+                  <Trash2 className="h-4 w-4" />
+                </button>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+      <Toast text={toast} />
+    </Card>
+  );
+}
+
+/* ---------- PROFESSIONALS ---------- */
+function ProfessionalsEditor() {
+  const qc = useQueryClient();
+  const { data: specs = [] } = useQuery({
+    queryKey: ["admin_specialties_list"],
+    queryFn: async (): Promise<Specialty[]> => {
+      const { data } = await supabase.from("specialties").select("*").order("category").order("sort_order");
+      return (data ?? []) as Specialty[];
+    },
+  });
+  const { data: items = [], refetch } = useQuery({
+    queryKey: ["admin_professionals"],
+    queryFn: async (): Promise<Professional[]> => {
+      const { data } = await (supabase as any).from("professionals").select("*").order("sort_order");
+      return (data ?? []) as Professional[];
+    },
+  });
+  const [toast, setToast] = useState<string | null>(null);
+  const [openSpec, setOpenSpec] = useState<string | null>(null);
+  const invalidate = () => { qc.invalidateQueries({ queryKey: ["professionals"] }); refetch(); };
+
+  async function add(specialty_id: string) {
+    const count = items.filter((p) => p.specialty_id === specialty_id).length;
+    const { error } = await (supabase as any).from("professionals").insert({ specialty_id, name: "Novo profissional", role: "", sort_order: count + 1 });
+    if (error) return setToast("Erro: " + error.message);
+    refetch();
+  }
+  async function upd(id: string, patch: Partial<Professional>) {
+    const { error } = await (supabase as any).from("professionals").update(patch).eq("id", id);
+    if (error) return setToast("Erro: " + error.message);
+    invalidate();
+  }
+  async function del(id: string) {
+    if (!confirm("Excluir este profissional?")) return;
+    const { error } = await (supabase as any).from("professionals").delete().eq("id", id);
+    if (error) return setToast("Erro: " + error.message);
+    invalidate();
+  }
+
+  const clinical = specs.filter((s) => s.category === "medica" || s.category === "nao_medica");
+
+  return (
+    <Card title="Profissionais por Especialidade" description="Vincule médicos e outros profissionais a cada especialidade. Aparecem no card e o currículo abre em modal.">
+      {clinical.length === 0 && <p className="text-sm text-muted-foreground">Cadastre especialidades primeiro na aba 'Especialidades e Exames'.</p>}
+      <div className="space-y-3">
+        {clinical.map((s) => {
+          const list = items.filter((p) => p.specialty_id === s.id);
+          const isOpen = openSpec === s.id;
+          return (
+            <div key={s.id} className="rounded-lg border border-border">
+              <button
+                onClick={() => setOpenSpec(isOpen ? null : s.id)}
+                className="w-full flex items-center justify-between px-4 py-3 text-left hover:bg-secondary/50"
+              >
+                <div>
+                  <span className="font-medium text-primary">{s.name}</span>
+                  <span className="ml-2 text-xs text-muted-foreground">({list.length} profissional{list.length === 1 ? "" : "is"})</span>
+                </div>
+                <span className="text-xs text-muted-foreground">{isOpen ? "▲" : "▼"}</span>
+              </button>
+              {isOpen && (
+                <div className="p-4 border-t border-border space-y-4">
+                  <button onClick={() => add(s.id)} className="inline-flex items-center gap-1.5 rounded-md bg-primary px-2.5 py-1.5 text-xs text-primary-foreground">
+                    <Plus className="h-3.5 w-3.5" /> Adicionar profissional
+                  </button>
+                  {list.map((p) => (
+                    <div key={p.id} className="rounded-lg border border-border p-3 grid gap-3">
+                      <div className="grid gap-3 md:grid-cols-[100px_1fr]">
+                        <div className="h-24 w-full bg-secondary rounded-md overflow-hidden grid place-items-center">
+                          {p.photo_url ? <img src={p.photo_url} alt="" className="h-full w-full object-cover" /> : <Users className="h-5 w-5 text-muted-foreground" />}
+                        </div>
+                        <div className="grid gap-2">
+                          <TextInput defaultValue={p.name} placeholder="Nome" onBlur={(e) => upd(p.id, { name: e.target.value })} />
+                          <TextInput defaultValue={p.role ?? ""} placeholder="Cargo/CRM (opcional)" onBlur={(e) => upd(p.id, { role: e.target.value })} />
+                        </div>
+                      </div>
+                      <Field label="Foto"><UploadOrUrl bucket="media" value={p.photo_url ?? ""} onChange={(v) => upd(p.id, { photo_url: v })} accept="image/*" /></Field>
+                      <Field label="Mini currículo (aparece ao clicar no nome)">
+                        <TextArea defaultValue={p.bio ?? ""} placeholder="Formação, atuação, especializações..." onBlur={(e) => upd(p.id, { bio: e.target.value })} />
+                      </Field>
+                      <div className="flex items-center justify-between">
+                        <label className="flex items-center gap-2 text-xs">
+                          <input type="checkbox" checked={p.published} onChange={(e) => upd(p.id, { published: e.target.checked })} />
+                          Publicado
+                        </label>
+                        <button onClick={() => del(p.id)} className="text-destructive hover:bg-destructive/10 rounded-md p-2" aria-label="Excluir">
+                          <Trash2 className="h-4 w-4" />
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                  {list.length === 0 && <p className="text-xs text-muted-foreground">Nenhum profissional para esta especialidade.</p>}
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+      <Toast text={toast} />
+    </Card>
+  );
+}
+
+/* ---------- ALBUMS ---------- */
+function AlbumsEditor() {
+  const qc = useQueryClient();
+  const { data: items = [], refetch } = useQuery({
+    queryKey: ["admin_albums"],
+    queryFn: async (): Promise<PhotoAlbum[]> => {
+      const { data } = await (supabase as any).from("photo_albums").select("*").order("sort_order");
+      return (data ?? []) as PhotoAlbum[];
+    },
+  });
+  const [toast, setToast] = useState<string | null>(null);
+  const invalidate = () => { qc.invalidateQueries({ queryKey: ["photo_albums"] }); refetch(); };
+  async function add() {
+    const { error } = await (supabase as any).from("photo_albums").insert({ name: "Novo álbum", sort_order: items.length + 1 });
+    if (error) return setToast("Erro: " + error.message);
+    refetch();
+  }
+  async function upd(id: string, patch: Partial<PhotoAlbum>) {
+    const { error } = await (supabase as any).from("photo_albums").update(patch).eq("id", id);
+    if (error) return setToast("Erro: " + error.message);
+    invalidate();
+  }
+  async function del(id: string) {
+    if (!confirm("Excluir este álbum? As fotos ficarão sem álbum, mas não serão apagadas.")) return;
+    const { error } = await (supabase as any).from("photo_albums").delete().eq("id", id);
+    if (error) return setToast("Erro: " + error.message);
+    invalidate();
+  }
+  return (
+    <Card title="Álbuns de fotos" description="Crie álbuns/pastas para organizar a galeria. Depois, na aba 'Mídia', escolha o álbum de cada foto.">
+      <button onClick={add} className="inline-flex items-center gap-2 rounded-md bg-primary px-3 py-2 text-sm text-primary-foreground">
+        <Plus className="h-4 w-4" /> Novo álbum
+      </button>
+      <div className="space-y-4">
+        {items.length === 0 && <p className="text-sm text-muted-foreground">Nenhum álbum ainda.</p>}
+        {items.map((a) => (
+          <div key={a.id} className="rounded-lg border border-border p-4 grid gap-3">
+            <div className="grid gap-3 md:grid-cols-[120px_1fr]">
+              <div className="h-24 w-full bg-secondary rounded-md overflow-hidden grid place-items-center">
+                {a.cover_url ? <img src={a.cover_url} alt="" className="h-full w-full object-cover" /> : <FolderOpen className="h-6 w-6 text-muted-foreground" />}
+              </div>
+              <div className="grid gap-2">
+                <TextInput defaultValue={a.name} placeholder="Nome do álbum" onBlur={(e) => upd(a.id, { name: e.target.value })} />
+                <TextArea defaultValue={a.description ?? ""} placeholder="Descrição" onBlur={(e) => upd(a.id, { description: e.target.value })} />
+              </div>
+            </div>
+            <Field label="Capa"><UploadOrUrl bucket="media" value={a.cover_url ?? ""} onChange={(v) => upd(a.id, { cover_url: v })} accept="image/*" /></Field>
+            <div className="grid gap-3 md:grid-cols-2 items-center">
+              <Field label="Ordem"><TextInput type="number" defaultValue={a.sort_order} onBlur={(e) => upd(a.id, { sort_order: Number(e.target.value) || 0 })} /></Field>
+              <div className="flex items-center justify-between">
+                <label className="flex items-center gap-2 text-xs">
+                  <input type="checkbox" checked={a.published} onChange={(e) => upd(a.id, { published: e.target.checked })} />
+                  Publicado
+                </label>
+                <button onClick={() => del(a.id)} className="text-destructive hover:bg-destructive/10 rounded-md p-2" aria-label="Excluir">
+                  <Trash2 className="h-4 w-4" />
+                </button>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+      <Toast text={toast} />
+    </Card>
+  );
+}
