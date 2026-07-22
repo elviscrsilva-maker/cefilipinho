@@ -225,6 +225,42 @@ export type Database = {
           },
         ]
       }
+      projects: {
+        Row: {
+          cover_url: string | null
+          created_at: string
+          description: string | null
+          id: string
+          link_url: string | null
+          published: boolean
+          sort_order: number
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          cover_url?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          link_url?: string | null
+          published?: boolean
+          sort_order?: number
+          title?: string
+          updated_at?: string
+        }
+        Update: {
+          cover_url?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          link_url?: string | null
+          published?: boolean
+          sort_order?: number
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       site_content: {
         Row: {
           key: string
