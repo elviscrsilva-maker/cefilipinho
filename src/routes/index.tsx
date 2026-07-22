@@ -15,6 +15,7 @@ import {
   ChevronRight,
   Calendar,
   ExternalLink,
+  X,
 } from "lucide-react";
 import { SiteLayout } from "@/components/SiteLayout";
 import heroAsset from "@/assets/fachada-filipinho.jpg.asset.json";
