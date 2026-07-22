@@ -1,8 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useState } from "react";
 import { SiteLayout } from "@/components/SiteLayout";
+import { BioModal } from "@/components/BioModal";
 import * as Icons from "lucide-react";
-import { Stethoscope } from "lucide-react";
-import { useSpecialties, type Specialty } from "@/lib/content";
+import { Stethoscope, Users } from "lucide-react";
+import { useSpecialties, useProfessionals, type Specialty, type Professional } from "@/lib/content";
 
 const TITLE = "Especialidades — Centro de Especialidades Filipinho";
 const DESC =
@@ -27,6 +29,16 @@ function getIcon(name: string) {
 
 function Especialidades() {
   const { data: items } = useSpecialties();
+  const { data: professionals = [] } = useProfessionals();
+  const [selected, setSelected] = useState<Professional | null>(null);
+
+  const bySpec = new Map<string, Professional[]>();
+  professionals.forEach((p) => {
+    const arr = bySpec.get(p.specialty_id) ?? [];
+    arr.push(p);
+    bySpec.set(p.specialty_id, arr);
+  });
+
   const groups = {
     medica: items.filter((i) => i.category === "medica"),
     nao_medica: items.filter((i) => i.category === "nao_medica"),
@@ -49,8 +61,8 @@ function Especialidades() {
         </div>
       </section>
 
-      <Group title="Especialidades Médicas" items={groups.medica} />
-      <Group title="Especialidades Não Médicas" items={groups.nao_medica} tinted />
+      <Group title="Especialidades Médicas" items={groups.medica} bySpec={bySpec} onSelectProf={setSelected} />
+      <Group title="Especialidades Não Médicas" items={groups.nao_medica} bySpec={bySpec} onSelectProf={setSelected} tinted />
 
       <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16 grid gap-8 md:grid-cols-2">
         <div className="rounded-2xl bg-card border border-border p-8 shadow-card">
@@ -81,11 +93,32 @@ function Especialidades() {
           </div>
         </div>
       </section>
+
+      <BioModal
+        open={!!selected}
+        onClose={() => setSelected(null)}
+        name={selected?.name ?? ""}
+        role={selected?.role}
+        photoUrl={selected?.photo_url}
+        bio={selected?.bio}
+      />
     </SiteLayout>
   );
 }
 
-function Group({ title, items, tinted }: { title: string; items: Specialty[]; tinted?: boolean }) {
+function Group({
+  title,
+  items,
+  bySpec,
+  onSelectProf,
+  tinted,
+}: {
+  title: string;
+  items: Specialty[];
+  bySpec: Map<string, Professional[]>;
+  onSelectProf: (p: Professional) => void;
+  tinted?: boolean;
+}) {
   if (items.length === 0) return null;
   return (
     <section className={tinted ? "bg-secondary/60 border-y border-border" : ""}>
@@ -94,15 +127,34 @@ function Group({ title, items, tinted }: { title: string; items: Specialty[]; ti
         <div className="mt-8 grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
           {items.map((it) => {
             const Icon = getIcon(it.icon);
+            const profs = bySpec.get(it.id) ?? [];
             return (
-              <div
-                key={it.id}
-                className="group rounded-xl border border-border bg-card p-5 shadow-card hover:shadow-elegant hover:-translate-y-0.5 transition"
-              >
+              <div key={it.id} className="group rounded-xl border border-border bg-card p-5 shadow-card hover:shadow-elegant transition flex flex-col">
                 <div className="h-11 w-11 rounded-lg bg-primary/10 text-primary grid place-items-center group-hover:bg-gradient-primary group-hover:text-primary-foreground transition">
                   <Icon className="h-5 w-5" />
                 </div>
                 <div className="mt-4 font-display text-lg text-primary font-semibold">{it.name}</div>
+                {profs.length > 0 && (
+                  <div className="mt-4 pt-4 border-t border-border">
+                    <div className="flex items-center gap-1.5 text-[10px] uppercase tracking-widest text-primary/60 mb-2">
+                      <Users className="h-3 w-3" /> Profissionais
+                    </div>
+                    <ul className="space-y-1.5">
+                      {profs.map((p) => (
+                        <li key={p.id}>
+                          <button
+                            type="button"
+                            onClick={() => onSelectProf(p)}
+                            className="text-left text-sm text-foreground hover:text-primary hover:underline"
+                          >
+                            {p.name}
+                            {p.role && <span className="text-muted-foreground font-normal"> · {p.role}</span>}
+                          </button>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
               </div>
             );
           })}

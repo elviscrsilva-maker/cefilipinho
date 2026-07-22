@@ -4,16 +4,7 @@ import { useState, type ReactNode } from "react";
 
 import logoFilipinhoAsset from "@/assets/logo-filipinho.png.asset.json";
 import logoElvisAsset from "@/assets/logo-elvis.jpeg.asset.json";
-import { useBrandingContent, useContactContent, useAppearanceContent } from "@/lib/content";
-
-const NAV = [
-  { to: "/", label: "Início" },
-  { to: "/sobre", label: "Institucional" },
-  { to: "/especialidades", label: "Especialidades" },
-  { to: "/midia", label: "Mídia" },
-  { to: "/podcast", label: "Podcast" },
-  { to: "/contato", label: "Contato" },
-] as const;
+import { useBrandingContent, useContactContent, useAppearanceContent, useHeaderContent } from "@/lib/content";
 
 function AppearanceInjector() {
   const { data } = useAppearanceContent();
@@ -37,10 +28,21 @@ export function SiteLayout({ children }: { children: ReactNode }) {
   const [open, setOpen] = useState(false);
   const { data: branding } = useBrandingContent();
   const { data: contact } = useContactContent();
+  const { data: header } = useHeaderContent();
   const b = branding!;
   const c = contact!;
+  const h = header!;
   const logoUrl = b.logo_url || logoFilipinhoAsset.url;
   const devLogoUrl = b.footer_dev_logo_url || logoElvisAsset.url;
+
+  const NAV = [
+    { to: "/", label: h.nav_home },
+    { to: "/sobre", label: h.nav_sobre },
+    { to: "/especialidades", label: h.nav_especialidades },
+    { to: "/midia", label: h.nav_midia },
+    { to: "/podcast", label: h.nav_podcast },
+    { to: "/contato", label: h.nav_contato },
+  ] as const;
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
@@ -48,7 +50,6 @@ export function SiteLayout({ children }: { children: ReactNode }) {
       <header className="sticky top-0 z-40 border-b border-border bg-background/85 backdrop-blur-md">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           <Link to="/" className="flex items-center gap-3 group">
-
             <img src={logoUrl} alt={b.site_title} className="h-11 sm:h-12 w-auto" />
           </Link>
           <nav className="hidden lg:flex items-center gap-1">
@@ -100,6 +101,11 @@ export function SiteLayout({ children }: { children: ReactNode }) {
                   {n.label}
                 </Link>
               ))}
+              {c.instagram_url && (
+                <a href={c.instagram_url} target="_blank" rel="noreferrer" className="px-4 py-2.5 rounded-md text-sm font-medium text-primary flex items-center gap-2">
+                  <Instagram className="h-4 w-4" /> Instagram
+                </a>
+              )}
             </nav>
           </div>
         )}
@@ -143,7 +149,6 @@ export function SiteLayout({ children }: { children: ReactNode }) {
                 </a>
               </div>
             )}
-
           </div>
           <div>
             <div className="text-sm font-semibold mb-3 text-gold">Navegação</div>

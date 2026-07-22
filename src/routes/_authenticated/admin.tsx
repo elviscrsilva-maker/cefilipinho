@@ -10,11 +10,16 @@ import {
   type ContactContent,
   type BrandingContent,
   type AppearanceContent,
+  type HeaderContent,
   type MediaItem,
   type PodcastEpisode,
   type Specialty,
   type SpecialtyCategory,
   type TextAlign,
+  type EventItem,
+  type TeamMember,
+  type Professional,
+  type PhotoAlbum,
 } from "@/lib/content";
 import {
   Loader2,

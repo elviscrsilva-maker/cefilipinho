@@ -1,8 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { SiteLayout } from "@/components/SiteLayout";
-import { Camera, Play, ImageIcon, ExternalLink } from "lucide-react";
-import { useMediaItems } from "@/lib/content";
+import { Camera, Play, ExternalLink, ChevronLeft, FolderOpen, X } from "lucide-react";
+import { useMediaItems, usePhotoAlbums, type MediaItem, type PhotoAlbum } from "@/lib/content";
 
 const TITLE = "Mídia — Centro de Especialidades Filipinho";
 const DESC = "Galeria de fotos e vídeos institucionais do Centro de Especialidades Filipinho.";
@@ -33,7 +33,7 @@ function youtubeThumb(url: string): string | null {
   return yt ? `https://img.youtube.com/vi/${yt[1]}/hqdefault.jpg` : null;
 }
 
-function VideoCard({ v }: { v: { id: string; url: string; title: string; description: string | null; thumbnail_url: string | null } }) {
+function VideoCard({ v }: { v: MediaItem }) {
   const [playing, setPlaying] = useState(false);
   const embed = embedVideoUrl(v.url);
   const isFile = embed?.match(/\.(mp4|webm|ogg)$/i);
@@ -51,12 +51,7 @@ function VideoCard({ v }: { v: { id: string; url: string; title: string; descrip
         ) : playing ? (
           <iframe src={embed} title={v.title} className="h-full w-full" allowFullScreen allow="autoplay; encrypted-media" />
         ) : (
-          <button
-            type="button"
-            onClick={() => setPlaying(true)}
-            className="group h-full w-full relative"
-            aria-label={`Reproduzir ${v.title}`}
-          >
+          <button type="button" onClick={() => setPlaying(true)} className="group h-full w-full relative" aria-label={`Reproduzir ${v.title}`}>
             {poster ? (
               <img src={poster} alt={v.title} className="absolute inset-0 h-full w-full object-cover" />
             ) : (
@@ -78,10 +73,64 @@ function VideoCard({ v }: { v: { id: string; url: string; title: string; descrip
   );
 }
 
+function Lightbox({ src, onClose }: { src: string; onClose: () => void }) {
+  return (
+    <div className="fixed inset-0 z-50 bg-black/90 grid place-items-center p-4" onClick={onClose}>
+      <button aria-label="Fechar" className="absolute top-4 right-4 h-10 w-10 grid place-items-center rounded-full bg-white/10 text-white">
+        <X className="h-5 w-5" />
+      </button>
+      <img src={src} alt="" className="max-h-[90vh] max-w-full object-contain" />
+    </div>
+  );
+}
+
+function AlbumView({ album, photos, onBack }: { album: PhotoAlbum; photos: MediaItem[]; onBack: () => void }) {
+  const [lightbox, setLightbox] = useState<string | null>(null);
+  const shown = photos.slice(0, 12);
+  return (
+    <>
+      <button onClick={onBack} className="inline-flex items-center gap-1.5 text-sm text-primary hover:underline mb-6">
+        <ChevronLeft className="h-4 w-4" /> Voltar aos álbuns
+      </button>
+      <h3 className="font-display text-2xl text-primary font-semibold">{album.name}</h3>
+      {album.description && <p className="mt-1 text-sm text-muted-foreground">{album.description}</p>}
+      {shown.length === 0 ? (
+        <p className="mt-6 text-sm text-muted-foreground">Álbum vazio.</p>
+      ) : (
+        <div className="mt-6 grid gap-3 grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+          {shown.map((f) => (
+            <button key={f.id} type="button" onClick={() => setLightbox(f.url)} className="aspect-square rounded-xl overflow-hidden border border-border shadow-card group">
+              <img src={f.thumbnail_url || f.url} alt={f.title} className="h-full w-full object-cover group-hover:scale-105 transition" />
+            </button>
+          ))}
+        </div>
+      )}
+      {photos.length > 12 && (
+        <p className="mt-4 text-xs text-muted-foreground">Exibindo 12 de {photos.length} fotos deste álbum.</p>
+      )}
+      {lightbox && <Lightbox src={lightbox} onClose={() => setLightbox(null)} />}
+    </>
+  );
+}
+
 function Midia() {
   const { data: items = [] } = useMediaItems();
+  const { data: albums = [] } = usePhotoAlbums();
+  const [openAlbum, setOpenAlbum] = useState<PhotoAlbum | null>(null);
   const videos = items.filter((i) => i.kind === "video");
   const fotos = items.filter((i) => i.kind === "photo");
+
+  const photosByAlbum = new Map<string, MediaItem[]>();
+  const unassigned: MediaItem[] = [];
+  fotos.forEach((f) => {
+    if (f.album_id) {
+      const arr = photosByAlbum.get(f.album_id) ?? [];
+      arr.push(f);
+      photosByAlbum.set(f.album_id, arr);
+    } else {
+      unassigned.push(f);
+    }
+  });
 
   return (
     <SiteLayout>
@@ -117,16 +166,66 @@ function Midia() {
             <Camera className="h-5 w-5 text-primary" />
             <h2 className="font-display text-2xl text-primary font-semibold">Galeria de fotos</h2>
           </div>
-          {fotos.length === 0 ? (
-            <p className="text-sm text-muted-foreground">Nenhuma foto publicada ainda.</p>
+
+          {openAlbum ? (
+            <AlbumView
+              album={openAlbum}
+              photos={photosByAlbum.get(openAlbum.id) ?? []}
+              onBack={() => setOpenAlbum(null)}
+            />
           ) : (
-            <div className="grid gap-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-              {fotos.map((f) => (
-                <a key={f.id} href={f.url} target="_blank" rel="noreferrer" className="aspect-square rounded-xl overflow-hidden border border-border shadow-card group">
-                  <img src={f.thumbnail_url || f.url} alt={f.title} className="h-full w-full object-cover group-hover:scale-105 transition" />
-                </a>
-              ))}
-            </div>
+            <>
+              {albums.length === 0 && unassigned.length === 0 && (
+                <p className="text-sm text-muted-foreground">Nenhuma foto publicada ainda.</p>
+              )}
+              {albums.length > 0 && (
+                <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+                  {albums.map((a) => {
+                    const count = photosByAlbum.get(a.id)?.length ?? 0;
+                    const cover = a.cover_url || photosByAlbum.get(a.id)?.[0]?.thumbnail_url || photosByAlbum.get(a.id)?.[0]?.url;
+                    return (
+                      <button
+                        key={a.id}
+                        onClick={() => setOpenAlbum(a)}
+                        className="text-left rounded-2xl overflow-hidden border border-border bg-card shadow-card hover:shadow-elegant hover:-translate-y-0.5 transition"
+                      >
+                        <div className="aspect-[4/3] bg-secondary relative">
+                          {cover ? (
+                            <img src={cover} alt={a.name} className="absolute inset-0 h-full w-full object-cover" />
+                          ) : (
+                            <div className="absolute inset-0 grid place-items-center text-muted-foreground">
+                              <FolderOpen className="h-10 w-10" />
+                            </div>
+                          )}
+                          <div className="absolute bottom-2 right-2 rounded-full bg-black/60 text-white text-xs px-2.5 py-1">
+                            {count} {count === 1 ? "foto" : "fotos"}
+                          </div>
+                        </div>
+                        <div className="p-4">
+                          <div className="font-display text-lg text-primary font-semibold">{a.name}</div>
+                          {a.description && <div className="mt-1 text-xs text-muted-foreground line-clamp-2">{a.description}</div>}
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
+
+              {unassigned.length > 0 && (
+                <div className={albums.length > 0 ? "mt-10" : ""}>
+                  {albums.length > 0 && (
+                    <h3 className="font-display text-lg text-primary font-semibold mb-4">Sem álbum</h3>
+                  )}
+                  <div className="grid gap-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+                    {unassigned.slice(0, 12).map((f) => (
+                      <a key={f.id} href={f.url} target="_blank" rel="noreferrer" className="aspect-square rounded-xl overflow-hidden border border-border shadow-card group">
+                        <img src={f.thumbnail_url || f.url} alt={f.title} className="h-full w-full object-cover group-hover:scale-105 transition" />
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </>
           )}
         </div>
       </section>
