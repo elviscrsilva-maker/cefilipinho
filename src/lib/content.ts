@@ -437,3 +437,21 @@ export function usePhotoAlbums() {
     initialData: [] as PhotoAlbum[],
   });
 }
+
+export function useProjects() {
+  return useQuery({
+    queryKey: ["projects"],
+    queryFn: async (): Promise<Project[]> => {
+      const { data } = await (supabase as any)
+        .from("projects")
+        .select("*")
+        .eq("published", true)
+        .order("sort_order");
+      const rows = (data ?? []) as Project[];
+      return Promise.all(
+        rows.map(async (r) => ({ ...r, cover_url: r.cover_url ? await resolveStorageUrl(r.cover_url) : null })),
+      );
+    },
+    initialData: [] as Project[],
+  });
+}
