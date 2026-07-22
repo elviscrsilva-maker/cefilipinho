@@ -167,7 +167,7 @@ function Home() {
         />
         <div className="absolute inset-0 bg-gradient-hero opacity-80" />
         <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-20 md:py-28">
-          <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_420px] items-start">
+          <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_500px] items-start">
             <div className="text-primary-foreground">
               <span className="inline-flex items-center gap-2 rounded-full border border-primary-foreground/25 bg-primary-foreground/10 px-3 py-1 text-xs uppercase tracking-widest">
                 <Sparkles className="h-3.5 w-3.5 text-gold" />
