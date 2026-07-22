@@ -1386,6 +1386,30 @@ function AlbumsEditor() {
               </div>
             </div>
             <Field label="Capa"><UploadOrUrl bucket="media" value={a.cover_url ?? ""} onChange={(v) => upd(a.id, { cover_url: v })} accept="image/*" /></Field>
+
+            <div className="rounded-md border border-dashed border-primary/40 bg-primary/5 p-3">
+              <div className="flex items-center justify-between gap-3 flex-wrap">
+                <div className="text-xs">
+                  <div className="font-semibold text-primary uppercase tracking-wider">Enviar pasta inteira de fotos</div>
+                  <div className="text-muted-foreground mt-0.5">
+                    Selecione várias imagens de uma vez — todas serão publicadas neste álbum. Fotos atuais: <strong>{countsMap[a.id] ?? 0}</strong>.
+                  </div>
+                </div>
+                <label className="cursor-pointer inline-flex items-center gap-2 rounded-md bg-primary px-3 py-2 text-sm text-primary-foreground hover:brightness-110">
+                  {uploadingId === a.id ? <Loader2 className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4" />}
+                  {uploadingId === a.id && progress ? `Enviando ${progress.done}/${progress.total}…` : "Enviar várias fotos"}
+                  <input
+                    type="file"
+                    accept="image/*"
+                    multiple
+                    className="hidden"
+                    disabled={uploadingId === a.id}
+                    onChange={(e) => { if (e.target.files && e.target.files.length) bulkUpload(a.id, e.target.files); e.currentTarget.value = ""; }}
+                  />
+                </label>
+              </div>
+            </div>
+
             <div className="grid gap-3 md:grid-cols-2 items-center">
               <Field label="Ordem"><TextInput type="number" defaultValue={a.sort_order} onBlur={(e) => upd(a.id, { sort_order: Number(e.target.value) || 0 })} /></Field>
               <div className="flex items-center justify-between">
