@@ -51,23 +51,33 @@ export const Route = createFileRoute("/_authenticated/admin")({
 
 type Tab =
   | "home"
+  | "cabecalho"
+  | "eventos"
   | "institucional"
+  | "equipe"
   | "contato"
   | "branding"
   | "especialidades"
+  | "profissionais"
   | "aparencia"
   | "midia"
+  | "albuns"
   | "podcast"
   | "conta";
 
 const TABS: { id: Tab; label: string; icon: typeof Home }[] = [
   { id: "home", label: "Página Inicial", icon: Home },
+  { id: "cabecalho", label: "Cabeçalho / Menu", icon: Palette },
+  { id: "eventos", label: "Eventos & Notícias", icon: Calendar },
   { id: "institucional", label: "Institucional", icon: Building2 },
+  { id: "equipe", label: "Direção & Coordenação", icon: Users },
   { id: "contato", label: "Contato", icon: Phone },
   { id: "branding", label: "Marca e Rodapé", icon: Palette },
   { id: "especialidades", label: "Especialidades e Exames", icon: Stethoscope },
+  { id: "profissionais", label: "Profissionais por Especialidade", icon: Users },
   { id: "aparencia", label: "Aparência (cores/fontes)", icon: Palette },
   { id: "midia", label: "Mídia (Fotos/Vídeos)", icon: ImageIcon },
+  { id: "albuns", label: "Álbuns de fotos", icon: FolderOpen },
   { id: "podcast", label: "Podcast", icon: Mic },
   { id: "conta", label: "Minha Conta", icon: KeyRound },
 ];
