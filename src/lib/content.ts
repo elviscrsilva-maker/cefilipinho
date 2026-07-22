@@ -64,7 +64,10 @@ export type HeaderContent = {
   nav_midia: string;
   nav_podcast: string;
   nav_contato: string;
+  bg_color: string;
+  text_color: string;
 };
+
 
 export type MediaItem = {
   id: string;
