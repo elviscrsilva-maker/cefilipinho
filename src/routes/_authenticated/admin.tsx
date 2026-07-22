@@ -1024,13 +1024,32 @@ function HeaderEditor() {
             <TextInput value={form.bg_color} onChange={(e) => upd("bg_color", e.target.value)} placeholder="#ffffff ou vazio" />
           </div>
         </Field>
-        <Field label="Cor do texto do cabeçalho" hint="Aplica aos links do menu. Deixe em branco para usar o padrão.">
+        <Field label="Cor do texto do cabeçalho" hint="Cor base do cabeçalho. Deixe em branco para usar o padrão.">
           <div className="flex gap-2">
             <input type="color" value={form.text_color || "#1e3a8a"} onChange={(e) => upd("text_color", e.target.value)} className="h-10 w-14 rounded border border-input" />
             <TextInput value={form.text_color} onChange={(e) => upd("text_color", e.target.value)} placeholder="#1e3a8a ou vazio" />
           </div>
         </Field>
+        <Field label="Cor dos links do menu" hint="Cor dos itens do menu ao lado da logo (estado normal).">
+          <div className="flex gap-2">
+            <input type="color" value={form.nav_link_color || "#1e3a8a"} onChange={(e) => upd("nav_link_color", e.target.value)} className="h-10 w-14 rounded border border-input" />
+            <TextInput value={form.nav_link_color} onChange={(e) => upd("nav_link_color", e.target.value)} placeholder="#1e3a8a ou vazio" />
+          </div>
+        </Field>
+        <Field label="Cor do texto do item ativo" hint="Cor do texto do item de menu selecionado.">
+          <div className="flex gap-2">
+            <input type="color" value={form.nav_active_text_color || "#1e3a8a"} onChange={(e) => upd("nav_active_text_color", e.target.value)} className="h-10 w-14 rounded border border-input" />
+            <TextInput value={form.nav_active_text_color} onChange={(e) => upd("nav_active_text_color", e.target.value)} placeholder="#1e3a8a ou vazio" />
+          </div>
+        </Field>
+        <Field label="Cor de fundo do item ativo" hint="Fundo do item de menu selecionado.">
+          <div className="flex gap-2">
+            <input type="color" value={form.nav_active_bg_color || "#d4af37"} onChange={(e) => upd("nav_active_bg_color", e.target.value)} className="h-10 w-14 rounded border border-input" />
+            <TextInput value={form.nav_active_bg_color} onChange={(e) => upd("nav_active_bg_color", e.target.value)} placeholder="#d4af37 ou vazio" />
+          </div>
+        </Field>
       </div>
+
       <div className="grid gap-4 md:grid-cols-2">
         <Field label='Início'><TextInput value={form.nav_home} onChange={(e) => upd("nav_home", e.target.value)} /></Field>
         <Field label='Institucional'><TextInput value={form.nav_sobre} onChange={(e) => upd("nav_sobre", e.target.value)} /></Field>

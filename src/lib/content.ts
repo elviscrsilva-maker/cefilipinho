@@ -66,7 +66,11 @@ export type HeaderContent = {
   nav_contato: string;
   bg_color: string;
   text_color: string;
+  nav_link_color: string;
+  nav_active_text_color: string;
+  nav_active_bg_color: string;
 };
+
 
 
 export type MediaItem = {
@@ -218,7 +222,11 @@ export const DEFAULTS = {
     nav_contato: "Contato",
     bg_color: "",
     text_color: "",
+    nav_link_color: "",
+    nav_active_text_color: "",
+    nav_active_bg_color: "",
   } as HeaderContent,
+
 
 };
 
