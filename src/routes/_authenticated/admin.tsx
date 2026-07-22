@@ -178,12 +178,17 @@ function AdminPage() {
 
         <main className="min-w-0">
           {tab === "home" && <HomeEditor />}
+          {tab === "cabecalho" && <HeaderEditor />}
+          {tab === "eventos" && <EventsEditor />}
           {tab === "institucional" && <InstitutionalEditor />}
+          {tab === "equipe" && <TeamEditor />}
           {tab === "contato" && <ContactEditor />}
           {tab === "branding" && <BrandingEditor />}
           {tab === "especialidades" && <SpecialtiesEditor />}
+          {tab === "profissionais" && <ProfessionalsEditor />}
           {tab === "aparencia" && <AppearanceEditor />}
           {tab === "midia" && <MediaEditor />}
+          {tab === "albuns" && <AlbumsEditor />}
           {tab === "podcast" && <PodcastEditor />}
           {tab === "conta" && <AccountEditor />}
         </main>
