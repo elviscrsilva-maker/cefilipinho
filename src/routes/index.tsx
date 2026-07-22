@@ -91,13 +91,13 @@ function HeroEventsCarousel({ items }: { items: EventItem[] }) {
         <button
           type="button"
           onClick={() => setOpenEv(ev)}
-          className="block w-full aspect-video bg-secondary relative group"
+          className="block w-full bg-black relative group"
           aria-label={`Ver evento ${ev.title}`}
         >
           {ev.cover_url ? (
-            <img src={ev.cover_url} alt={ev.title} className="absolute inset-0 h-full w-full object-cover group-hover:scale-[1.02] transition" />
+            <img src={ev.cover_url} alt={ev.title} className="w-full max-h-[420px] object-contain group-hover:scale-[1.02] transition" />
           ) : (
-            <div className="absolute inset-0 bg-gradient-primary grid place-items-center text-primary-foreground">
+            <div className="aspect-[4/3] bg-gradient-primary grid place-items-center text-primary-foreground">
               <Calendar className="h-10 w-10 opacity-70" />
             </div>
           )}
