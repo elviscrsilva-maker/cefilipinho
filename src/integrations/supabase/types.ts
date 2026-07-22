@@ -14,8 +14,48 @@ export type Database = {
   }
   public: {
     Tables: {
+      events: {
+        Row: {
+          cover_url: string | null
+          created_at: string
+          description: string | null
+          event_date: string | null
+          external_url: string | null
+          id: string
+          published: boolean
+          sort_order: number
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          cover_url?: string | null
+          created_at?: string
+          description?: string | null
+          event_date?: string | null
+          external_url?: string | null
+          id?: string
+          published?: boolean
+          sort_order?: number
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          cover_url?: string | null
+          created_at?: string
+          description?: string | null
+          event_date?: string | null
+          external_url?: string | null
+          id?: string
+          published?: boolean
+          sort_order?: number
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       media_items: {
         Row: {
+          album_id: string | null
           created_at: string
           description: string | null
           id: string
@@ -28,6 +68,7 @@ export type Database = {
           url: string
         }
         Insert: {
+          album_id?: string | null
           created_at?: string
           description?: string | null
           id?: string
@@ -40,6 +81,7 @@ export type Database = {
           url: string
         }
         Update: {
+          album_id?: string | null
           created_at?: string
           description?: string | null
           id?: string
@@ -50,6 +92,47 @@ export type Database = {
           title?: string
           updated_at?: string
           url?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "media_items_album_id_fkey"
+            columns: ["album_id"]
+            isOneToOne: false
+            referencedRelation: "photo_albums"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      photo_albums: {
+        Row: {
+          cover_url: string | null
+          created_at: string
+          description: string | null
+          id: string
+          name: string
+          published: boolean
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          cover_url?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          name: string
+          published?: boolean
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          cover_url?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          name?: string
+          published?: boolean
+          sort_order?: number
+          updated_at?: string
         }
         Relationships: []
       }
@@ -94,6 +177,53 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      professionals: {
+        Row: {
+          bio: string | null
+          created_at: string
+          id: string
+          name: string
+          photo_url: string | null
+          published: boolean
+          role: string | null
+          sort_order: number
+          specialty_id: string
+          updated_at: string
+        }
+        Insert: {
+          bio?: string | null
+          created_at?: string
+          id?: string
+          name: string
+          photo_url?: string | null
+          published?: boolean
+          role?: string | null
+          sort_order?: number
+          specialty_id: string
+          updated_at?: string
+        }
+        Update: {
+          bio?: string | null
+          created_at?: string
+          id?: string
+          name?: string
+          photo_url?: string | null
+          published?: boolean
+          role?: string | null
+          sort_order?: number
+          specialty_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "professionals_specialty_id_fkey"
+            columns: ["specialty_id"]
+            isOneToOne: false
+            referencedRelation: "specialties"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       site_content: {
         Row: {
@@ -144,6 +274,42 @@ export type Database = {
           id?: string
           name?: string
           published?: boolean
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      team_members: {
+        Row: {
+          bio: string | null
+          created_at: string
+          id: string
+          name: string
+          photo_url: string | null
+          published: boolean
+          role: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          bio?: string | null
+          created_at?: string
+          id?: string
+          name: string
+          photo_url?: string | null
+          published?: boolean
+          role: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          bio?: string | null
+          created_at?: string
+          id?: string
+          name?: string
+          photo_url?: string | null
+          published?: boolean
+          role?: string
           sort_order?: number
           updated_at?: string
         }

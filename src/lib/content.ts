@@ -57,6 +57,15 @@ export type AppearanceContent = {
   google_fonts_url: string;
 };
 
+export type HeaderContent = {
+  nav_home: string;
+  nav_sobre: string;
+  nav_especialidades: string;
+  nav_midia: string;
+  nav_podcast: string;
+  nav_contato: string;
+};
+
 export type MediaItem = {
   id: string;
   kind: "photo" | "video";
@@ -66,6 +75,7 @@ export type MediaItem = {
   thumbnail_url: string | null;
   sort_order: number;
   published: boolean;
+  album_id: string | null;
 };
 
 export type PodcastEpisode = {
@@ -86,6 +96,47 @@ export type Specialty = {
   category: SpecialtyCategory;
   name: string;
   icon: string;
+  sort_order: number;
+  published: boolean;
+};
+
+export type EventItem = {
+  id: string;
+  title: string;
+  event_date: string | null;
+  cover_url: string | null;
+  description: string | null;
+  external_url: string | null;
+  sort_order: number;
+  published: boolean;
+};
+
+export type TeamMember = {
+  id: string;
+  name: string;
+  role: string;
+  photo_url: string | null;
+  bio: string | null;
+  sort_order: number;
+  published: boolean;
+};
+
+export type Professional = {
+  id: string;
+  specialty_id: string;
+  name: string;
+  role: string | null;
+  photo_url: string | null;
+  bio: string | null;
+  sort_order: number;
+  published: boolean;
+};
+
+export type PhotoAlbum = {
+  id: string;
+  name: string;
+  description: string | null;
+  cover_url: string | null;
   sort_order: number;
   published: boolean;
 };
@@ -117,12 +168,7 @@ export const DEFAULTS = {
     cards_align: "left",
     history: "",
     history_align: "left",
-    leadership: [
-      { role: "Direção", name: "Marcos Santos da Silva" },
-      { role: "Sup. Administrativa", name: "Elvis Silva" },
-      { role: "RT de Enfermagem", name: "Alcione Sodré" },
-      { role: "RT de Farmácia", name: "Silvia Botelho" },
-    ],
+    leadership: [],
   } as InstitutionalContent,
   contact: {
     address: "Rua Vespasiano Ramos, 16 — CEP 65043-030, São Luís/MA",
@@ -150,6 +196,14 @@ export const DEFAULTS = {
     body_font: "",
     google_fonts_url: "",
   } as AppearanceContent,
+  header: {
+    nav_home: "Início",
+    nav_sobre: "Institucional",
+    nav_especialidades: "Especialidades",
+    nav_midia: "Mídia",
+    nav_podcast: "Podcast",
+    nav_contato: "Contato",
+  } as HeaderContent,
 };
 
 const STORAGE_URL_RE = /\/storage\/v1\/object\/(?:public|sign)\/([^/]+)\/([^?]+)/;
@@ -161,7 +215,6 @@ export async function resolveStorageUrl(url: string | null | undefined): Promise
   try {
     const bucket = m[1];
     const path = decodeURIComponent(m[2]);
-    // 100 anos — efetivamente permanente enquanto o arquivo existir no bucket
     const { data } = await supabase.storage.from(bucket).createSignedUrl(path, 60 * 60 * 24 * 365 * 100);
     return data?.signedUrl ?? url;
   } catch {
@@ -225,6 +278,13 @@ export function useAppearanceContent() {
     initialData: DEFAULTS.appearance,
   });
 }
+export function useHeaderContent() {
+  return useQuery({
+    queryKey: ["content", "header"],
+    queryFn: () => fetchContent("header", DEFAULTS.header),
+    initialData: DEFAULTS.header,
+  });
+}
 
 export function useMediaItems() {
   return useQuery({
@@ -285,5 +345,79 @@ export function useSpecialties() {
       return (data ?? []) as Specialty[];
     },
     initialData: [] as Specialty[],
+  });
+}
+
+export function useEvents() {
+  return useQuery({
+    queryKey: ["events"],
+    queryFn: async (): Promise<EventItem[]> => {
+      const { data } = await (supabase as any)
+        .from("events")
+        .select("*")
+        .eq("published", true)
+        .order("sort_order")
+        .order("event_date", { ascending: false })
+        .limit(5);
+      const rows = (data ?? []) as EventItem[];
+      return Promise.all(
+        rows.map(async (r) => ({ ...r, cover_url: r.cover_url ? await resolveStorageUrl(r.cover_url) : null })),
+      );
+    },
+    initialData: [] as EventItem[],
+  });
+}
+
+export function useTeamMembers() {
+  return useQuery({
+    queryKey: ["team_members"],
+    queryFn: async (): Promise<TeamMember[]> => {
+      const { data } = await (supabase as any)
+        .from("team_members")
+        .select("*")
+        .eq("published", true)
+        .order("sort_order");
+      const rows = (data ?? []) as TeamMember[];
+      return Promise.all(
+        rows.map(async (r) => ({ ...r, photo_url: r.photo_url ? await resolveStorageUrl(r.photo_url) : null })),
+      );
+    },
+    initialData: [] as TeamMember[],
+  });
+}
+
+export function useProfessionals() {
+  return useQuery({
+    queryKey: ["professionals"],
+    queryFn: async (): Promise<Professional[]> => {
+      const { data } = await (supabase as any)
+        .from("professionals")
+        .select("*")
+        .eq("published", true)
+        .order("sort_order");
+      const rows = (data ?? []) as Professional[];
+      return Promise.all(
+        rows.map(async (r) => ({ ...r, photo_url: r.photo_url ? await resolveStorageUrl(r.photo_url) : null })),
+      );
+    },
+    initialData: [] as Professional[],
+  });
+}
+
+export function usePhotoAlbums() {
+  return useQuery({
+    queryKey: ["photo_albums"],
+    queryFn: async (): Promise<PhotoAlbum[]> => {
+      const { data } = await (supabase as any)
+        .from("photo_albums")
+        .select("*")
+        .eq("published", true)
+        .order("sort_order");
+      const rows = (data ?? []) as PhotoAlbum[];
+      return Promise.all(
+        rows.map(async (r) => ({ ...r, cover_url: r.cover_url ? await resolveStorageUrl(r.cover_url) : null })),
+      );
+    },
+    initialData: [] as PhotoAlbum[],
   });
 }

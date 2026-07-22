@@ -1,7 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useState } from "react";
 import { SiteLayout } from "@/components/SiteLayout";
-import { Building2, Target, Eye, Heart, Award } from "lucide-react";
-import { useInstitutionalContent, useContactContent, useBrandingContent, type TextAlign } from "@/lib/content";
+import { BioModal } from "@/components/BioModal";
+import { Building2, Target, Eye, Heart, Award, User } from "lucide-react";
+import { useInstitutionalContent, useContactContent, useBrandingContent, useTeamMembers, type TextAlign, type TeamMember } from "@/lib/content";
 
 const ALIGN: Record<TextAlign, string> = {
   left: "text-left",
@@ -31,6 +33,8 @@ function Sobre() {
   const { data: inst } = useInstitutionalContent();
   const { data: contact } = useContactContent();
   const { data: branding } = useBrandingContent();
+  const { data: team = [] } = useTeamMembers();
+  const [selected, setSelected] = useState<TeamMember | null>(null);
   const i = inst!;
   const c = contact!;
   const b = branding!;
@@ -41,9 +45,7 @@ function Sobre() {
           <div className="flex items-center gap-2 text-xs uppercase tracking-widest text-gold">
             <Building2 className="h-4 w-4" /> {i.hero_eyebrow}
           </div>
-          <h1 className="mt-4 font-display text-4xl md:text-5xl font-semibold">
-            {i.hero_title}
-          </h1>
+          <h1 className="mt-4 font-display text-4xl md:text-5xl font-semibold">{i.hero_title}</h1>
           <p className={`mt-4 max-w-2xl text-primary-foreground/85 text-lg whitespace-pre-line ${ALIGN[i.hero_align ?? "left"]}`}>
             {i.hero_subtitle}
           </p>
@@ -106,15 +108,45 @@ function Sobre() {
 
       <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16">
         <h2 className="font-display text-3xl text-primary font-semibold">Direção & Coordenação</h2>
-        <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {(i.leadership ?? []).map((l) => (
-            <div key={l.name} className="rounded-xl border border-border bg-card p-6 shadow-card">
-              <div className="text-xs uppercase tracking-widest text-primary/70">{l.role}</div>
-              <div className="mt-2 font-display text-lg text-primary font-semibold">{l.name}</div>
-            </div>
+        <p className="mt-2 text-sm text-muted-foreground">Clique em um profissional para ver o currículo completo.</p>
+        <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          {team.map((m) => (
+            <button
+              key={m.id}
+              type="button"
+              onClick={() => setSelected(m)}
+              className="text-left rounded-2xl border border-border bg-card shadow-card hover:shadow-elegant hover:-translate-y-0.5 transition overflow-hidden"
+            >
+              <div className="aspect-square bg-secondary">
+                {m.photo_url ? (
+                  <img src={m.photo_url} alt={m.name} className="h-full w-full object-cover" />
+                ) : (
+                  <div className="h-full w-full grid place-items-center text-muted-foreground">
+                    <User className="h-10 w-10" />
+                  </div>
+                )}
+              </div>
+              <div className="p-5">
+                <div className="text-xs uppercase tracking-widest text-primary/70">{m.role}</div>
+                <div className="mt-1 font-display text-lg text-primary font-semibold">{m.name}</div>
+                {m.bio && <div className="mt-2 text-xs text-primary/80 font-medium">Ver currículo →</div>}
+              </div>
+            </button>
           ))}
+          {team.length === 0 && (
+            <p className="text-sm text-muted-foreground col-span-full">Nenhum profissional cadastrado ainda.</p>
+          )}
         </div>
       </section>
+
+      <BioModal
+        open={!!selected}
+        onClose={() => setSelected(null)}
+        name={selected?.name ?? ""}
+        role={selected?.role}
+        photoUrl={selected?.photo_url}
+        bio={selected?.bio}
+      />
     </SiteLayout>
   );
 }
