@@ -656,6 +656,21 @@ function MediaEditor() {
               {it.kind === "video" && (
                 <TextInput defaultValue={it.thumbnail_url ?? ""} placeholder="URL da miniatura (opcional)" onBlur={(e) => updateItem(it.id, { thumbnail_url: e.target.value })} />
               )}
+              {it.kind === "photo" && (
+                <label className="text-xs">
+                  <span className="block text-primary font-semibold uppercase tracking-wider mb-1">Álbum</span>
+                  <select
+                    value={it.album_id ?? ""}
+                    onChange={(e) => updateItem(it.id, { album_id: e.target.value || null })}
+                    className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                  >
+                    <option value="">— Sem álbum —</option>
+                    {albums.map((a) => (
+                      <option key={a.id} value={a.id}>{a.name}</option>
+                    ))}
+                  </select>
+                </label>
+              )}
               <label className="flex items-center gap-2 text-xs">
                 <input type="checkbox" checked={it.published} onChange={(e) => updateItem(it.id, { published: e.target.checked })} />
                 Publicado no site
