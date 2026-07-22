@@ -1306,8 +1306,24 @@ function AlbumsEditor() {
       return (data ?? []) as PhotoAlbum[];
     },
   });
+  const { data: countsMap = {} } = useQuery({
+    queryKey: ["admin_albums_counts"],
+    queryFn: async (): Promise<Record<string, number>> => {
+      const { data } = await supabase.from("media_items").select("album_id").eq("kind", "photo");
+      const map: Record<string, number> = {};
+      (data ?? []).forEach((r: any) => { if (r.album_id) map[r.album_id] = (map[r.album_id] ?? 0) + 1; });
+      return map;
+    },
+  });
   const [toast, setToast] = useState<string | null>(null);
-  const invalidate = () => { qc.invalidateQueries({ queryKey: ["photo_albums"] }); refetch(); };
+  const [uploadingId, setUploadingId] = useState<string | null>(null);
+  const [progress, setProgress] = useState<{ done: number; total: number } | null>(null);
+  const invalidate = () => {
+    qc.invalidateQueries({ queryKey: ["photo_albums"] });
+    qc.invalidateQueries({ queryKey: ["media_items"] });
+    qc.invalidateQueries({ queryKey: ["admin_albums_counts"] });
+    refetch();
+  };
   async function add() {
     const { error } = await (supabase as any).from("photo_albums").insert({ name: "Novo álbum", sort_order: items.length + 1 });
     if (error) return setToast("Erro: " + error.message);
@@ -1323,6 +1339,33 @@ function AlbumsEditor() {
     const { error } = await (supabase as any).from("photo_albums").delete().eq("id", id);
     if (error) return setToast("Erro: " + error.message);
     invalidate();
+  }
+  async function bulkUpload(albumId: string, files: FileList) {
+    setUploadingId(albumId);
+    const total = files.length;
+    setProgress({ done: 0, total });
+    let done = 0;
+    for (const file of Array.from(files)) {
+      const path = `${Date.now()}-${Math.random().toString(36).slice(2, 7)}-${file.name.replace(/[^a-zA-Z0-9.\-_]/g, "_")}`;
+      const up = await supabase.storage.from("media").upload(path, file, { upsert: false });
+      if (!up.error) {
+        const { data } = supabase.storage.from("media").getPublicUrl(path);
+        await supabase.from("media_items").insert({
+          kind: "photo",
+          title: file.name.replace(/\.[^.]+$/, ""),
+          url: data.publicUrl,
+          album_id: albumId,
+          published: true,
+          sort_order: done + 1,
+        });
+      }
+      done += 1;
+      setProgress({ done, total });
+    }
+    setUploadingId(null);
+    setProgress(null);
+    invalidate();
+    setToast(`${done} foto(s) enviada(s) ao álbum.`);
   }
   return (
     <Card title="Álbuns de fotos" description="Crie álbuns/pastas para organizar a galeria. Depois, na aba 'Mídia', escolha o álbum de cada foto.">
