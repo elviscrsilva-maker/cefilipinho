@@ -222,7 +222,11 @@ export const DEFAULTS = {
     nav_contato: "Contato",
     bg_color: "",
     text_color: "",
+    nav_link_color: "",
+    nav_active_text_color: "",
+    nav_active_bg_color: "",
   } as HeaderContent,
+
 
 };
 
