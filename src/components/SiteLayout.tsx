@@ -56,18 +56,18 @@ export function SiteLayout({ children }: { children: ReactNode }) {
       >
 
 
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-3 group">
-            <img src={logoUrl} alt={b.site_title} className="h-11 sm:h-12 w-auto" />
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 h-20 md:h-24 flex items-center justify-between gap-4">
+          <Link to="/" className="flex items-center gap-3 group shrink-0">
+            <img src={logoUrl} alt={b.site_title} className="h-14 sm:h-16 md:h-20 w-auto drop-shadow-sm" />
           </Link>
           <nav className="hidden lg:flex items-center gap-1">
             {NAV.map((n) => (
               <Link
                 key={n.to}
                 to={n.to}
-                activeProps={{ className: "text-primary bg-secondary" }}
+                activeProps={{ className: "text-primary bg-gold font-semibold shadow-sm ring-1 ring-gold/70" }}
                 inactiveProps={{ className: "text-muted-foreground hover:text-primary hover:bg-secondary/60" }}
-                className="px-4 py-2 rounded-md text-sm font-medium transition-colors"
+                className="px-4 py-2 rounded-md text-sm transition-colors"
               >
                 {n.label}
               </Link>
