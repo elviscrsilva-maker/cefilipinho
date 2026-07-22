@@ -587,6 +587,13 @@ function MediaEditor() {
       return (data ?? []) as MediaItem[];
     },
   });
+  const { data: albums = [] } = useQuery({
+    queryKey: ["admin_albums_for_media"],
+    queryFn: async (): Promise<PhotoAlbum[]> => {
+      const { data } = await (supabase as any).from("photo_albums").select("id,name").order("sort_order");
+      return (data ?? []) as PhotoAlbum[];
+    },
+  });
   const [toast, setToast] = useState<string | null>(null);
 
   async function addItem(kind: "photo" | "video") {
