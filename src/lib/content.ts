@@ -203,7 +203,7 @@ export const DEFAULTS = {
     nav_home: "Início",
     nav_sobre: "Institucional",
     nav_especialidades: "Especialidades",
-    nav_midia: "Mídia",
+    nav_midia: "Projetos e Instrumento de Gestão",
     nav_podcast: "Podcast",
     nav_contato: "Contato",
     bg_color: "",
