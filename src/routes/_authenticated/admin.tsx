@@ -1010,7 +1010,21 @@ function HeaderEditor() {
   useEffect(() => setForm(data), [data]);
   const upd = (k: keyof HeaderContent, v: string) => setForm({ ...form, [k]: v });
   return (
-    <Card title="Cabeçalho / Menu" description="Rótulos dos itens de menu do cabeçalho. A logo é editada na aba 'Marca e Rodapé', e as cores na aba 'Aparência'.">
+    <Card title="Cabeçalho / Menu" description="Cores e rótulos do cabeçalho. A logo é editada na aba 'Marca e Rodapé'.">
+      <div className="grid gap-4 md:grid-cols-2 mb-2">
+        <Field label="Cor de fundo do cabeçalho" hint="Deixe em branco para usar o fundo padrão (translúcido).">
+          <div className="flex gap-2">
+            <input type="color" value={form.bg_color || "#ffffff"} onChange={(e) => upd("bg_color", e.target.value)} className="h-10 w-14 rounded border border-input" />
+            <TextInput value={form.bg_color} onChange={(e) => upd("bg_color", e.target.value)} placeholder="#ffffff ou vazio" />
+          </div>
+        </Field>
+        <Field label="Cor do texto do cabeçalho" hint="Aplica aos links do menu. Deixe em branco para usar o padrão.">
+          <div className="flex gap-2">
+            <input type="color" value={form.text_color || "#1e3a8a"} onChange={(e) => upd("text_color", e.target.value)} className="h-10 w-14 rounded border border-input" />
+            <TextInput value={form.text_color} onChange={(e) => upd("text_color", e.target.value)} placeholder="#1e3a8a ou vazio" />
+          </div>
+        </Field>
+      </div>
       <div className="grid gap-4 md:grid-cols-2">
         <Field label='Início'><TextInput value={form.nav_home} onChange={(e) => upd("nav_home", e.target.value)} /></Field>
         <Field label='Institucional'><TextInput value={form.nav_sobre} onChange={(e) => upd("nav_sobre", e.target.value)} /></Field>
@@ -1019,6 +1033,7 @@ function HeaderEditor() {
         <Field label='Podcast'><TextInput value={form.nav_podcast} onChange={(e) => upd("nav_podcast", e.target.value)} /></Field>
         <Field label='Contato'><TextInput value={form.nav_contato} onChange={(e) => upd("nav_contato", e.target.value)} /></Field>
       </div>
+
       <SaveButton saving={saving} onClick={async () => {
         setSaving(true);
         try { await save(form); setToast("Alterações salvas!"); setTimeout(() => setToast(null), 2500); }

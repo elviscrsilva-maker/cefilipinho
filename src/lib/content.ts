@@ -64,7 +64,10 @@ export type HeaderContent = {
   nav_midia: string;
   nav_podcast: string;
   nav_contato: string;
+  bg_color: string;
+  text_color: string;
 };
+
 
 export type MediaItem = {
   id: string;
@@ -203,7 +206,10 @@ export const DEFAULTS = {
     nav_midia: "Mídia",
     nav_podcast: "Podcast",
     nav_contato: "Contato",
+    bg_color: "",
+    text_color: "",
   } as HeaderContent,
+
 };
 
 const STORAGE_URL_RE = /\/storage\/v1\/object\/(?:public|sign)\/([^/]+)\/([^?]+)/;

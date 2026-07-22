@@ -47,7 +47,15 @@ export function SiteLayout({ children }: { children: ReactNode }) {
   return (
     <div className="min-h-screen flex flex-col bg-background">
       <AppearanceInjector />
-      <header className="sticky top-0 z-40 border-b border-border bg-background/85 backdrop-blur-md">
+      <header
+        className={`sticky top-0 z-40 border-b border-border backdrop-blur-md ${h.bg_color ? "" : "bg-background/85"}`}
+        style={{
+          backgroundColor: h.bg_color || undefined,
+          color: h.text_color || undefined,
+        }}
+      >
+
+
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           <Link to="/" className="flex items-center gap-3 group">
             <img src={logoUrl} alt={b.site_title} className="h-11 sm:h-12 w-auto" />
