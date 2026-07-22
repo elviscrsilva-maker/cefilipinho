@@ -45,8 +45,8 @@ function EventModal({ ev, onClose }: { ev: EventItem; onClose: () => void }) {
           <X className="h-5 w-5" />
         </button>
         {ev.cover_url && (
-          <div className="aspect-video bg-secondary">
-            <img src={ev.cover_url} alt={ev.title} className="h-full w-full object-cover" />
+          <div className="bg-black flex items-center justify-center max-h-[70vh]">
+            <img src={ev.cover_url} alt={ev.title} className="max-h-[70vh] w-auto max-w-full object-contain" />
           </div>
         )}
         <div className="p-6 md:p-8 overflow-y-auto">
@@ -91,13 +91,13 @@ function HeroEventsCarousel({ items }: { items: EventItem[] }) {
         <button
           type="button"
           onClick={() => setOpenEv(ev)}
-          className="block w-full aspect-video bg-secondary relative group"
+          className="block w-full bg-black relative group"
           aria-label={`Ver evento ${ev.title}`}
         >
           {ev.cover_url ? (
-            <img src={ev.cover_url} alt={ev.title} className="absolute inset-0 h-full w-full object-cover group-hover:scale-[1.02] transition" />
+            <img src={ev.cover_url} alt={ev.title} className="w-full max-h-[420px] object-contain group-hover:scale-[1.02] transition" />
           ) : (
-            <div className="absolute inset-0 bg-gradient-primary grid place-items-center text-primary-foreground">
+            <div className="aspect-[4/3] bg-gradient-primary grid place-items-center text-primary-foreground">
               <Calendar className="h-10 w-10 opacity-70" />
             </div>
           )}
@@ -167,7 +167,7 @@ function Home() {
         />
         <div className="absolute inset-0 bg-gradient-hero opacity-80" />
         <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-20 md:py-28">
-          <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_420px] items-start">
+          <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_500px] items-start">
             <div className="text-primary-foreground">
               <span className="inline-flex items-center gap-2 rounded-full border border-primary-foreground/25 bg-primary-foreground/10 px-3 py-1 text-xs uppercase tracking-widest">
                 <Sparkles className="h-3.5 w-3.5 text-gold" />
