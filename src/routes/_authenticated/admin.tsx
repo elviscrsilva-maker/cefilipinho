@@ -1426,3 +1426,138 @@ function AlbumsEditor() {
     </Card>
   );
 }
+
+/* ---------- PROJECTS ---------- */
+type ProjectRow = {
+  id: string;
+  title: string;
+  description: string | null;
+  cover_url: string | null;
+  link_url: string | null;
+  sort_order: number;
+  published: boolean;
+};
+
+function ProjectsEditor() {
+  const qc = useQueryClient();
+  const { data: items = [], refetch } = useQuery({
+    queryKey: ["admin_projects"],
+    queryFn: async (): Promise<ProjectRow[]> => {
+      const { data } = await (supabase as any)
+        .from("projects")
+        .select("*")
+        .order("sort_order")
+        .order("created_at", { ascending: false });
+      return (data ?? []) as ProjectRow[];
+    },
+  });
+  const [toast, setToast] = useState<string | null>(null);
+  const invalidate = () => {
+    qc.invalidateQueries({ queryKey: ["projects"] });
+    refetch();
+  };
+  async function add() {
+    const { error } = await (supabase as any)
+      .from("projects")
+      .insert({ title: "Novo projeto", sort_order: items.length + 1 });
+    if (error) return setToast("Erro: " + error.message);
+    refetch();
+  }
+  async function upd(id: string, patch: Partial<ProjectRow>) {
+    const { error } = await (supabase as any).from("projects").update(patch).eq("id", id);
+    if (error) return setToast("Erro: " + error.message);
+    invalidate();
+  }
+  async function del(id: string) {
+    if (!confirm("Excluir este projeto?")) return;
+    const { error } = await (supabase as any).from("projects").delete().eq("id", id);
+    if (error) return setToast("Erro: " + error.message);
+    invalidate();
+  }
+  return (
+    <Card
+      title="Projetos e Instrumento de Gestão"
+      description="Adicione projetos com capa e link. Ao clicar na capa, o visitante é direcionado para o link informado."
+    >
+      <button
+        onClick={add}
+        className="inline-flex items-center gap-2 rounded-md bg-primary px-3 py-2 text-sm text-primary-foreground"
+      >
+        <Plus className="h-4 w-4" /> Novo projeto
+      </button>
+      <div className="space-y-4">
+        {items.length === 0 && (
+          <p className="text-sm text-muted-foreground">Nenhum projeto cadastrado.</p>
+        )}
+        {items.map((p) => (
+          <div key={p.id} className="rounded-lg border border-border p-4 grid gap-3">
+            <div className="grid gap-3 md:grid-cols-[160px_1fr]">
+              <div className="h-32 w-full bg-secondary rounded-md overflow-hidden grid place-items-center">
+                {p.cover_url ? (
+                  <img src={p.cover_url} alt="" className="h-full w-full object-cover" />
+                ) : (
+                  <FolderOpen className="h-8 w-8 text-muted-foreground" />
+                )}
+              </div>
+              <div className="grid gap-2">
+                <TextInput
+                  defaultValue={p.title}
+                  placeholder="Título do projeto"
+                  onBlur={(e) => upd(p.id, { title: e.target.value })}
+                />
+                <TextArea
+                  defaultValue={p.description ?? ""}
+                  placeholder="Descrição (opcional)"
+                  onBlur={(e) => upd(p.id, { description: e.target.value })}
+                />
+              </div>
+            </div>
+            <Field label="Capa (imagem)">
+              <UploadOrUrl
+                bucket="media"
+                value={p.cover_url ?? ""}
+                onChange={(v) => upd(p.id, { cover_url: v })}
+                accept="image/*"
+                placeholder="URL da imagem ou envie um arquivo"
+              />
+            </Field>
+            <div className="grid gap-3 md:grid-cols-[1fr_140px]">
+              <Field label="Link do projeto (URL de destino ao clicar na imagem)">
+                <TextInput
+                  defaultValue={p.link_url ?? ""}
+                  placeholder="https://..."
+                  onBlur={(e) => upd(p.id, { link_url: e.target.value || null })}
+                />
+              </Field>
+              <Field label="Ordem">
+                <TextInput
+                  type="number"
+                  defaultValue={p.sort_order}
+                  onBlur={(e) => upd(p.id, { sort_order: Number(e.target.value) || 0 })}
+                />
+              </Field>
+            </div>
+            <div className="flex items-center justify-between">
+              <label className="flex items-center gap-2 text-xs">
+                <input
+                  type="checkbox"
+                  checked={p.published}
+                  onChange={(e) => upd(p.id, { published: e.target.checked })}
+                />
+                Publicado
+              </label>
+              <button
+                onClick={() => del(p.id)}
+                className="text-destructive hover:bg-destructive/10 rounded-md p-2"
+                aria-label="Excluir"
+              >
+                <Trash2 className="h-4 w-4" />
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+      <Toast text={toast} />
+    </Card>
+  );
+}
