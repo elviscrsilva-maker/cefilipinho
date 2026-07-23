@@ -188,17 +188,17 @@ export function SiteLayout({ children }: { children: ReactNode }) {
           </div>
         </div>
         <div className="border-t border-primary-foreground/15">
-          <div className="mx-auto max-w-7xl px-4 py-5 text-xs text-primary-foreground/70 flex flex-wrap items-center justify-between gap-4">
+          <div className="mx-auto max-w-7xl px-4 py-5 text-xs text-primary-foreground/70 flex flex-col items-center justify-center gap-4 text-center">
             <span>© {new Date().getFullYear()} {b.site_title} — SEMUS São Luís · Todos os direitos reservados.</span>
             <a
               href={b.footer_dev_url || "#"}
               target={b.footer_dev_url ? "_blank" : undefined}
               rel="noreferrer"
-              className="flex items-center gap-2 text-primary-foreground/80 hover:text-primary-foreground transition"
+              className="flex flex-col items-center gap-2 text-primary-foreground/80 hover:text-primary-foreground transition"
               aria-label="Desenvolvido por Elvis C. R. Silva"
             >
-              <span className="hidden sm:inline text-[11px] uppercase tracking-widest">Desenvolvido por</span>
-              <img src={devLogoUrl} alt="Elvis C. R. Silva" className="h-12 w-auto rounded-md bg-primary-foreground/5 p-1" />
+              <span className="text-[11px] uppercase tracking-widest">Desenvolvido por</span>
+              <img src={devLogoUrl} alt="Elvis C. R. Silva" className="h-14 w-auto rounded-md bg-primary-foreground/5 p-1" />
             </a>
           </div>
         </div>
