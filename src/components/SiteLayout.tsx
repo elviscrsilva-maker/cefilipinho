@@ -198,7 +198,7 @@ export function SiteLayout({ children }: { children: ReactNode }) {
               aria-label="Desenvolvido por Elvis C. R. Silva"
             >
               <span className="hidden sm:inline text-[11px] uppercase tracking-widest">Desenvolvido por</span>
-              <img src={devLogoUrl} alt="Elvis C. R. Silva" className="h-9 w-auto rounded-md bg-primary-foreground/5 p-1" />
+              <img src={devLogoUrl} alt="Elvis C. R. Silva" className="h-12 w-auto rounded-md bg-primary-foreground/5 p-1" />
             </a>
           </div>
         </div>
