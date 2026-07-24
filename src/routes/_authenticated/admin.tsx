@@ -324,7 +324,7 @@ function HomeEditor() {
   const [toast, setToast] = useState<string | null>(null);
   useEffect(() => setForm(data), [data]);
 
-  const upd = (k: keyof HomeContent, v: string) => setForm({ ...form, [k]: v });
+  const upd = <K extends keyof HomeContent>(k: K, v: HomeContent[K]) => setForm({ ...form, [k]: v });
 
   return (
     <Card title="Página inicial" description="Textos e imagem principal da home.">
@@ -357,6 +357,49 @@ function HomeEditor() {
         <Field label="Botão 2 — link">
           <TextInput value={form.cta_secondary_href} onChange={(e) => upd("cta_secondary_href", e.target.value)} />
         </Field>
+      </div>
+
+      <div className="rounded-lg border border-border p-4 space-y-4">
+        <div className="flex items-center justify-between">
+          <div>
+            <div className="text-sm font-semibold text-primary">Bloco de destaque (abaixo dos botões)</div>
+            <div className="text-xs text-muted-foreground">Imagem + texto editável exibidos no Hero, abaixo dos botões.</div>
+          </div>
+          <label className="inline-flex items-center gap-2 text-sm">
+            <input
+              type="checkbox"
+              checked={!!form.feature_enabled}
+              onChange={(e) => upd("feature_enabled", e.target.checked)}
+              className="h-4 w-4"
+            />
+            Exibir
+          </label>
+        </div>
+        <Field label="Imagem do bloco" hint="Recomendado: proporção horizontal. Será enquadrada sem cortes.">
+          <UploadOrUrl bucket="branding" value={form.feature_image_url} onChange={(v) => upd("feature_image_url", v)} accept="image/*" />
+        </Field>
+        <Field label="Título do bloco">
+          <TextInput value={form.feature_title} onChange={(e) => upd("feature_title", e.target.value)} />
+        </Field>
+        <Field label="Texto / informações">
+          <TextArea value={form.feature_text} onChange={(e) => upd("feature_text", e.target.value)} rows={5} />
+        </Field>
+        <AlignPicker
+          label="Alinhamento do texto"
+          value={form.feature_align ?? "left"}
+          onChange={(v) => upd("feature_align", v)}
+        />
+        <div className="grid gap-4 md:grid-cols-3">
+          <Field label="Cor de fundo">
+            <input type="color" value={form.feature_bg_color || "#ffffff"} onChange={(e) => upd("feature_bg_color", e.target.value)} className="h-10 w-14 rounded border border-input" />
+          </Field>
+          <Field label="Cor do título">
+            <input type="color" value={form.feature_title_color || "#1e3a8a"} onChange={(e) => upd("feature_title_color", e.target.value)} className="h-10 w-14 rounded border border-input" />
+          </Field>
+          <Field label="Cor do texto">
+            <input type="color" value={form.feature_text_color || "#111827"} onChange={(e) => upd("feature_text_color", e.target.value)} className="h-10 w-14 rounded border border-input" />
+          </Field>
+        </div>
       </div>
       <SaveButton
         saving={saving}

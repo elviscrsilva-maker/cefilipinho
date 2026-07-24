@@ -10,6 +10,14 @@ export type HomeContent = {
   cta_primary_href: string;
   cta_secondary_label: string;
   cta_secondary_href: string;
+  feature_enabled: boolean;
+  feature_image_url: string;
+  feature_title: string;
+  feature_text: string;
+  feature_align: TextAlign;
+  feature_bg_color: string;
+  feature_title_color: string;
+  feature_text_color: string;
 };
 
 export type LeadershipMember = { role: string; name: string };
@@ -169,6 +177,14 @@ export const DEFAULTS = {
     cta_primary_href: "/especialidades",
     cta_secondary_label: "Fale conosco",
     cta_secondary_href: "/contato",
+    feature_enabled: false,
+    feature_image_url: "",
+    feature_title: "",
+    feature_text: "",
+    feature_align: "left",
+    feature_bg_color: "",
+    feature_title_color: "",
+    feature_text_color: "",
   } as HomeContent,
   institutional: {
     hero_eyebrow: "Institucional",
@@ -262,7 +278,11 @@ export function useHomeContent() {
     queryKey: ["content", "home"],
     queryFn: async () => {
       const c = await fetchContent("home", DEFAULTS.home);
-      return { ...c, hero_image_url: await resolveStorageUrl(c.hero_image_url) };
+      return {
+        ...c,
+        hero_image_url: await resolveStorageUrl(c.hero_image_url),
+        feature_image_url: await resolveStorageUrl(c.feature_image_url),
+      };
     },
     initialData: DEFAULTS.home,
   });
