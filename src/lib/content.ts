@@ -10,6 +10,14 @@ export type HomeContent = {
   cta_primary_href: string;
   cta_secondary_label: string;
   cta_secondary_href: string;
+  feature_enabled: boolean;
+  feature_image_url: string;
+  feature_title: string;
+  feature_text: string;
+  feature_align: TextAlign;
+  feature_bg_color: string;
+  feature_title_color: string;
+  feature_text_color: string;
 };
 
 export type LeadershipMember = { role: string; name: string };
