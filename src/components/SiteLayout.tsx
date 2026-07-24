@@ -4,7 +4,8 @@ import { useState, type ReactNode } from "react";
 
 import logoFilipinhoAsset from "@/assets/logo-filipinho.png.asset.json";
 import logoElvisAsset from "@/assets/logo-elvis.jpeg.asset.json";
-import { useBrandingContent, useContactContent, useAppearanceContent, useHeaderContent } from "@/lib/content";
+import { useBrandingContent, useContactContent, useAppearanceContent, useHeaderContent, useHomeContent } from "@/lib/content";
+import heroAsset from "@/assets/fachada-filipinho.jpg.asset.json";
 
 function AppearanceInjector() {
   const { data } = useAppearanceContent();
