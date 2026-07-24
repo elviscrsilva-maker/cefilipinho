@@ -278,7 +278,11 @@ export function useHomeContent() {
     queryKey: ["content", "home"],
     queryFn: async () => {
       const c = await fetchContent("home", DEFAULTS.home);
-      return { ...c, hero_image_url: await resolveStorageUrl(c.hero_image_url) };
+      return {
+        ...c,
+        hero_image_url: await resolveStorageUrl(c.hero_image_url),
+        feature_image_url: await resolveStorageUrl(c.feature_image_url),
+      };
     },
     initialData: DEFAULTS.home,
   });
