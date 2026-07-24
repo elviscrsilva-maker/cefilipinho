@@ -30,11 +30,13 @@ export function SiteLayout({ children }: { children: ReactNode }) {
   const { data: branding } = useBrandingContent();
   const { data: contact } = useContactContent();
   const { data: header } = useHeaderContent();
+  const { data: home } = useHomeContent();
   const b = branding!;
   const c = contact!;
   const h = header!;
   const logoUrl = b.logo_url || logoFilipinhoAsset.url;
   const devLogoUrl = b.footer_dev_logo_url || logoElvisAsset.url;
+  const bgImg = home?.hero_image_url || heroAsset.url;
 
   const NAV = [
     { to: "/", label: h.nav_home },
@@ -46,7 +48,14 @@ export function SiteLayout({ children }: { children: ReactNode }) {
   ] as const;
 
   return (
-    <div className="min-h-screen flex flex-col bg-background">
+    <div className="min-h-screen flex flex-col relative">
+      {/* Fixed background image across all pages */}
+      <div
+        aria-hidden
+        className="fixed inset-0 -z-10 bg-cover bg-center bg-no-repeat"
+        style={{ backgroundImage: `url(${bgImg})` }}
+      />
+      <div aria-hidden className="fixed inset-0 -z-10 bg-background/85" />
       <AppearanceInjector />
       <header
         className={`sticky top-0 z-40 border-b border-border backdrop-blur-md ${h.bg_color ? "" : "bg-background/85"}`}
