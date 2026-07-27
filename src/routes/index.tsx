@@ -167,7 +167,7 @@ function Home() {
         />
         <div className="absolute inset-0 bg-gradient-hero opacity-80" />
         <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-20 md:py-28">
-          <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_500px] items-start">
+          <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_643px] items-start">
             <div className="text-primary-foreground">
               <span className="inline-flex items-center gap-2 rounded-full border border-primary-foreground/25 bg-primary-foreground/10 px-3 py-1 text-xs uppercase tracking-widest">
                 <Sparkles className="h-3.5 w-3.5 text-gold" />
@@ -190,34 +190,35 @@ function Home() {
 
               {h.feature_enabled && (h.feature_image_url || h.feature_title || h.feature_text) && (
                 <div
-                  className="mt-8 rounded-2xl border-2 border-gold/70 bg-card/95 backdrop-blur shadow-elegant overflow-hidden max-w-[640px]"
-                  style={{ backgroundColor: h.feature_bg_color || undefined }}
+                  className="mt-8 overflow-hidden"
+                  style={{ width: "567px", height: "189px", maxWidth: "100%", backgroundColor: h.feature_bg_color || "transparent" }}
                 >
-                  {h.feature_image_url && (
+                  {h.feature_image_url ? (
                     <img
                       src={h.feature_image_url}
                       alt={h.feature_title || "Destaque"}
-                      className="w-full max-h-[280px] object-contain bg-black/5"
+                      className="w-full h-full object-contain"
                     />
+                  ) : (
+                    <div className="p-4" style={{ textAlign: h.feature_align || "left" }}>
+                      {h.feature_title && (
+                        <h3
+                          className="font-display text-xl md:text-2xl font-semibold text-primary"
+                          style={{ color: h.feature_title_color || undefined }}
+                        >
+                          {h.feature_title}
+                        </h3>
+                      )}
+                      {h.feature_text && (
+                        <p
+                          className="mt-2 text-foreground/90 leading-relaxed whitespace-pre-line"
+                          style={{ color: h.feature_text_color || undefined }}
+                        >
+                          {h.feature_text}
+                        </p>
+                      )}
+                    </div>
                   )}
-                  <div className="p-5 md:p-6" style={{ textAlign: h.feature_align || "left" }}>
-                    {h.feature_title && (
-                      <h3
-                        className="font-display text-xl md:text-2xl font-semibold text-primary"
-                        style={{ color: h.feature_title_color || undefined }}
-                      >
-                        {h.feature_title}
-                      </h3>
-                    )}
-                    {h.feature_text && (
-                      <p
-                        className="mt-2 text-foreground/90 leading-relaxed whitespace-pre-line"
-                        style={{ color: h.feature_text_color || undefined }}
-                      >
-                        {h.feature_text}
-                      </p>
-                    )}
-                  </div>
                 </div>
               )}
             </div>
