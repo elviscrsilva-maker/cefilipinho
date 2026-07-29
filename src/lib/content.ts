@@ -185,7 +185,7 @@ export const DEFAULTS = {
     feature_text: "",
     feature_align: "left",
     feature_bg_color: "",
-    feature_bg_transparent: true,
+    feature_bg_transparent: false,
     feature_bg_opacity: 1,
     feature_title_color: "",
     feature_text_color: "",
