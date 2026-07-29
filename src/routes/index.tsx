@@ -201,7 +201,16 @@ function Home() {
               {h.feature_enabled && (h.feature_image_url || h.feature_title || h.feature_text) && (
                 <div
                   className="mt-8 overflow-hidden"
-                  style={{ width: "567px", height: "189px", maxWidth: "100%", backgroundColor: h.feature_bg_color || "transparent" }}
+                  style={{
+                    width: "567px",
+                    height: "189px",
+                    maxWidth: "100%",
+                    backgroundColor: h.feature_bg_transparent
+                      ? "transparent"
+                      : h.feature_bg_color
+                      ? hexToRgba(h.feature_bg_color, h.feature_bg_opacity ?? 1)
+                      : "transparent",
+                  }}
                 >
                   {h.feature_image_url ? (
                     <img
