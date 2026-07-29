@@ -391,13 +391,36 @@ function HomeEditor() {
         />
         <div className="grid gap-4 md:grid-cols-3">
           <Field label="Cor de fundo">
-            <input type="color" value={form.feature_bg_color || "#ffffff"} onChange={(e) => upd("feature_bg_color", e.target.value)} className="h-10 w-14 rounded border border-input" />
+            <input type="color" value={form.feature_bg_color || "#ffffff"} onChange={(e) => upd("feature_bg_color", e.target.value)} disabled={!!form.feature_bg_transparent} className="h-10 w-14 rounded border border-input disabled:opacity-50" />
           </Field>
           <Field label="Cor do título">
             <input type="color" value={form.feature_title_color || "#1e3a8a"} onChange={(e) => upd("feature_title_color", e.target.value)} className="h-10 w-14 rounded border border-input" />
           </Field>
           <Field label="Cor do texto">
             <input type="color" value={form.feature_text_color || "#111827"} onChange={(e) => upd("feature_text_color", e.target.value)} className="h-10 w-14 rounded border border-input" />
+          </Field>
+        </div>
+        <div className="grid gap-4 md:grid-cols-2 items-end">
+          <label className="inline-flex items-center gap-2 text-sm">
+            <input
+              type="checkbox"
+              checked={!!form.feature_bg_transparent}
+              onChange={(e) => upd("feature_bg_transparent", e.target.checked)}
+              className="h-4 w-4"
+            />
+            Fundo transparente
+          </label>
+          <Field label={`Opacidade do fundo (${Math.round((form.feature_bg_opacity ?? 1) * 100)}%)`}>
+            <input
+              type="range"
+              min={0}
+              max={1}
+              step={0.05}
+              value={form.feature_bg_opacity ?? 1}
+              disabled={!!form.feature_bg_transparent}
+              onChange={(e) => upd("feature_bg_opacity", parseFloat(e.target.value))}
+              className="w-full disabled:opacity-50"
+            />
           </Field>
         </div>
       </div>

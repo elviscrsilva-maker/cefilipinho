@@ -37,6 +37,16 @@ const HIGHLIGHTS = [
   { icon: HeartPulse, label: "Mais de 30 profissionais" },
 ];
 
+function hexToRgba(hex: string, alpha: number): string {
+  const clean = hex.replace("#", "");
+  if (clean.length !== 6) return `rgba(255,255,255,${alpha})`;
+  const r = parseInt(clean.substring(0, 2), 16);
+  const g = parseInt(clean.substring(2, 4), 16);
+  const b = parseInt(clean.substring(4, 6), 16);
+  if (Number.isNaN(r) || Number.isNaN(g) || Number.isNaN(b)) return `rgba(255,255,255,${alpha})`;
+  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+}
+
 function EventModal({ ev, onClose }: { ev: EventItem; onClose: () => void }) {
   return (
     <div className="fixed inset-0 z-50 bg-black/70 grid place-items-center p-4" onClick={onClose}>
@@ -191,7 +201,16 @@ function Home() {
               {h.feature_enabled && (h.feature_image_url || h.feature_title || h.feature_text) && (
                 <div
                   className="mt-8 overflow-hidden"
-                  style={{ width: "567px", height: "189px", maxWidth: "100%", backgroundColor: h.feature_bg_color || "transparent" }}
+                  style={{
+                    width: "567px",
+                    height: "189px",
+                    maxWidth: "100%",
+                    backgroundColor: h.feature_bg_transparent
+                      ? "transparent"
+                      : h.feature_bg_color
+                      ? hexToRgba(h.feature_bg_color, h.feature_bg_opacity ?? 1)
+                      : "transparent",
+                  }}
                 >
                   {h.feature_image_url ? (
                     <img
