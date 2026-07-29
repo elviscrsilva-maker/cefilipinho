@@ -16,6 +16,8 @@ export type HomeContent = {
   feature_text: string;
   feature_align: TextAlign;
   feature_bg_color: string;
+  feature_bg_transparent: boolean;
+  feature_bg_opacity: number;
   feature_title_color: string;
   feature_text_color: string;
 };
