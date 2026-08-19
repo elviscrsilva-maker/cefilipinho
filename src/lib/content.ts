@@ -101,11 +101,21 @@ export type PodcastEpisode = {
   description: string | null;
   cover_url: string | null;
   audio_url: string | null;
+  video_url: string | null;
   external_url: string | null;
   episode_number: number | null;
   published_at: string;
   published: boolean;
 };
+
+export function youtubeId(url: string | null | undefined): string | null {
+  if (!url) return null;
+  const m = url.match(
+    /(?:youtube\.com\/(?:watch\?(?:.*&)?v=|embed\/|shorts\/|live\/)|youtu\.be\/)([A-Za-z0-9_-]{6,})/,
+  );
+  return m ? m[1] : null;
+}
+
 
 export type SpecialtyCategory = "medica" | "nao_medica" | "procedimento" | "exame";
 export type Specialty = {
@@ -372,6 +382,7 @@ export function usePodcastEpisodes() {
           ...r,
           cover_url: r.cover_url ? await resolveStorageUrl(r.cover_url) : null,
           audio_url: r.audio_url ? await resolveStorageUrl(r.audio_url) : null,
+          video_url: r.video_url ? await resolveStorageUrl(r.video_url) : null,
         })),
       );
     },

@@ -814,12 +814,19 @@ function PodcastEditor() {
               <Field label="Capa do episódio">
                 <UploadOrUrl bucket="podcast" value={ep.cover_url ?? ""} onChange={(v) => upd(ep.id, { cover_url: v })} accept="image/*" />
               </Field>
+              <Field label="Vídeo (YouTube)" hint="Cole o link do YouTube para o vídeo rodar no site.">
+                <TextInput defaultValue={ep.video_url ?? ""} placeholder="https://www.youtube.com/watch?v=..." onBlur={(e) => upd(ep.id, { video_url: e.target.value })} />
+              </Field>
+              <Field label="Arquivo de vídeo (opcional)" hint="Ou envie um MP4 direto.">
+                <UploadOrUrl bucket="podcast" value={ep.video_url ?? ""} onChange={(v) => upd(ep.id, { video_url: v })} accept="video/*" />
+              </Field>
               <Field label="Arquivo de áudio" hint="Envie um MP3 ou cole a URL.">
                 <UploadOrUrl bucket="podcast" value={ep.audio_url ?? ""} onChange={(v) => upd(ep.id, { audio_url: v })} accept="audio/*" />
               </Field>
               <Field label="Link externo (Spotify/YouTube)" hint="Opcional.">
                 <TextInput defaultValue={ep.external_url ?? ""} placeholder="https://open.spotify.com/..." onBlur={(e) => upd(ep.id, { external_url: e.target.value })} />
               </Field>
+
               <Field label="Nº do episódio">
                 <TextInput type="number" defaultValue={ep.episode_number ?? ""} onBlur={(e) => upd(ep.id, { episode_number: e.target.value ? Number(e.target.value) : null })} />
               </Field>
