@@ -1,7 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
+export type HighlightItem = { icon: string; label: string };
+
 export type HomeContent = {
+  highlights: HighlightItem[];
   hero_eyebrow: string;
   hero_title: string;
   hero_subtitle: string;
@@ -180,6 +183,12 @@ export type Project = {
 
 export const DEFAULTS = {
   home: {
+    highlights: [
+      { icon: "Stethoscope", label: "13 Especialidades Médicas" },
+      { icon: "Users", label: "6 Especialidades Não Médicas" },
+      { icon: "Microscope", label: "Exames & Procedimentos" },
+      { icon: "HeartPulse", label: "Mais de 30 profissionais" },
+    ],
     hero_eyebrow: "SEMUS · São Luís",
     hero_title: "Centro de Especialidades Filipinho",
     hero_subtitle:
