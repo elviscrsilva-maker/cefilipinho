@@ -1,7 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
+export type HighlightItem = { icon: string; label: string };
+
 export type HomeContent = {
+  highlights: HighlightItem[];
   hero_eyebrow: string;
   hero_title: string;
   hero_subtitle: string;
