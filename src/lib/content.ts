@@ -382,6 +382,7 @@ export function usePodcastEpisodes() {
           ...r,
           cover_url: r.cover_url ? await resolveStorageUrl(r.cover_url) : null,
           audio_url: r.audio_url ? await resolveStorageUrl(r.audio_url) : null,
+          video_url: r.video_url ? await resolveStorageUrl(r.video_url) : null,
         })),
       );
     },
