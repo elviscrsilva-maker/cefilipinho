@@ -100,6 +100,12 @@ function AuthPage() {
             <p className="mt-1 text-sm text-muted-foreground">
               Área restrita ao administrador do site.
             </p>
+            {mode === "signup" && (
+              <p className="mt-2 text-xs text-muted-foreground">
+                Se o e-mail já foi cadastrado antes, não crie outra conta: volte ao login ou use
+                “Esqueci minha senha” para definir uma nova senha.
+              </p>
+            )}
           </div>
 
           <form onSubmit={submit} className="space-y-4">
