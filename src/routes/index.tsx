@@ -1,10 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import {
-  Stethoscope,
-  HeartPulse,
-  Microscope,
-  Users,
   Clock,
   MapPin,
   Phone,
@@ -17,6 +13,7 @@ import {
   ExternalLink,
   X,
 } from "lucide-react";
+import { highlightIcon } from "@/lib/highlight-icons";
 import { SiteLayout } from "@/components/SiteLayout";
 import heroAsset from "@/assets/fachada-filipinho.jpg.asset.json";
 import { useHomeContent, useInstitutionalContent, useContactContent, useEvents, type EventItem } from "@/lib/content";
@@ -30,12 +27,8 @@ export const Route = createFileRoute("/")({
   }),
 });
 
-const HIGHLIGHTS = [
-  { icon: Stethoscope, label: "13 Especialidades Médicas" },
-  { icon: Users, label: "6 Especialidades Não Médicas" },
-  { icon: Microscope, label: "Exames & Procedimentos" },
-  { icon: HeartPulse, label: "Mais de 30 profissionais" },
-];
+
+
 
 function hexToRgba(hex: string, alpha: number): string {
   const clean = hex.replace("#", "");
@@ -250,14 +243,17 @@ function Home() {
           </div>
 
           <div className="mt-14 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {HIGHLIGHTS.map((hi) => (
-              <div key={hi.label} className="rounded-xl border border-primary-foreground/15 bg-primary-foreground/10 backdrop-blur px-5 py-4 flex items-center gap-3 text-primary-foreground">
-                <div className="h-10 w-10 rounded-lg bg-gold/90 grid place-items-center text-primary shrink-0">
-                  <hi.icon className="h-5 w-5" />
+            {(h.highlights ?? []).map((hi, idx) => {
+              const Icon = highlightIcon(hi.icon);
+              return (
+                <div key={`${hi.label}-${idx}`} className="rounded-xl border border-primary-foreground/15 bg-primary-foreground/10 backdrop-blur px-5 py-4 flex items-center gap-3 text-primary-foreground">
+                  <div className="h-10 w-10 rounded-lg bg-gold/90 grid place-items-center text-primary shrink-0">
+                    <Icon className="h-5 w-5" />
+                  </div>
+                  <span className="text-sm font-medium">{hi.label}</span>
                 </div>
-                <span className="text-sm font-medium">{hi.label}</span>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </section>
