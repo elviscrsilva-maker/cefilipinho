@@ -21,6 +21,7 @@ import {
   type Professional,
   type PhotoAlbum,
 } from "@/lib/content";
+import { HIGHLIGHT_ICON_NAMES } from "@/lib/highlight-icons";
 import {
   Loader2,
   LogOut,
