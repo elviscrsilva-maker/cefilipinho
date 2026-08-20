@@ -1,10 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import {
-  Stethoscope,
-  HeartPulse,
-  Microscope,
-  Users,
   Clock,
   MapPin,
   Phone,
@@ -17,6 +13,7 @@ import {
   ExternalLink,
   X,
 } from "lucide-react";
+import { highlightIcon } from "@/lib/highlight-icons";
 import { SiteLayout } from "@/components/SiteLayout";
 import heroAsset from "@/assets/fachada-filipinho.jpg.asset.json";
 import { useHomeContent, useInstitutionalContent, useContactContent, useEvents, type EventItem } from "@/lib/content";
