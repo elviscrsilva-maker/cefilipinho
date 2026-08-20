@@ -30,12 +30,8 @@ export const Route = createFileRoute("/")({
   }),
 });
 
-const HIGHLIGHTS = [
-  { icon: Stethoscope, label: "13 Especialidades Médicas" },
-  { icon: Users, label: "6 Especialidades Não Médicas" },
-  { icon: Microscope, label: "Exames & Procedimentos" },
-  { icon: HeartPulse, label: "Mais de 30 profissionais" },
-];
+
+
 
 function hexToRgba(hex: string, alpha: number): string {
   const clean = hex.replace("#", "");
