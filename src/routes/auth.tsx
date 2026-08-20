@@ -23,6 +23,29 @@ function AuthPage() {
     });
   }, [navigate]);
 
+  function traduzErro(err: any): string {
+    const raw = String(err?.message ?? "").toLowerCase();
+    if (raw.includes("already registered") || raw.includes("already been registered") || raw.includes("user already")) {
+      return "Este e-mail já possui conta criada. Use a opção “Entrar”. Se não lembra a senha, clique em “Esqueci minha senha”.";
+    }
+    if (raw.includes("invalid login credentials")) {
+      return "E-mail ou senha incorretos. Se este é seu primeiro acesso, use “Esqueci minha senha” para definir uma senha.";
+    }
+    if (raw.includes("email not confirmed")) {
+      return "E-mail ainda não confirmado. Verifique sua caixa de entrada (e o spam) e clique no link de confirmação.";
+    }
+    if (raw.includes("password") && raw.includes("6")) {
+      return "A senha deve ter no mínimo 6 caracteres.";
+    }
+    if (raw.includes("signups not allowed") || raw.includes("signup is disabled")) {
+      return "Criação de contas desativada. Use “Esqueci minha senha” para acessar sua conta já existente.";
+    }
+    if (raw.includes("rate limit") || raw.includes("too many")) {
+      return "Muitas tentativas em pouco tempo. Aguarde alguns minutos e tente novamente.";
+    }
+    return err?.message ?? "Erro inesperado";
+  }
+
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true);
@@ -38,7 +61,15 @@ function AuthPage() {
           password,
           options: { emailRedirectTo: `${window.location.origin}/admin` },
         });
-        if (error) throw error;
+        if (error) {
+          const raw = String(error.message ?? "").toLowerCase();
+          if (raw.includes("already")) {
+            setMode("signin");
+            setMsg({ type: "error", text: traduzErro(error) });
+            return;
+          }
+          throw error;
+        }
         setMsg({ type: "success", text: "Conta criada. Você já pode entrar." });
         setMode("signin");
       } else {
@@ -49,7 +80,7 @@ function AuthPage() {
         setMsg({ type: "success", text: "Se este e-mail existir, um link de redefinição foi enviado." });
       }
     } catch (err: any) {
-      setMsg({ type: "error", text: err.message ?? "Erro inesperado" });
+      setMsg({ type: "error", text: traduzErro(err) });
     } finally {
       setLoading(false);
     }
@@ -69,6 +100,12 @@ function AuthPage() {
             <p className="mt-1 text-sm text-muted-foreground">
               Área restrita ao administrador do site.
             </p>
+            {mode === "signup" && (
+              <p className="mt-2 text-xs text-muted-foreground">
+                Se o e-mail já foi cadastrado antes, não crie outra conta: volte ao login ou use
+                “Esqueci minha senha” para definir uma nova senha.
+              </p>
+            )}
           </div>
 
           <form onSubmit={submit} className="space-y-4">
