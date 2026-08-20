@@ -61,7 +61,15 @@ function AuthPage() {
           password,
           options: { emailRedirectTo: `${window.location.origin}/admin` },
         });
-        if (error) throw error;
+        if (error) {
+          const raw = String(error.message ?? "").toLowerCase();
+          if (raw.includes("already")) {
+            setMode("signin");
+            setMsg({ type: "error", text: traduzErro(error) });
+            return;
+          }
+          throw error;
+        }
         setMsg({ type: "success", text: "Conta criada. Você já pode entrar." });
         setMode("signin");
       } else {
@@ -72,7 +80,7 @@ function AuthPage() {
         setMsg({ type: "success", text: "Se este e-mail existir, um link de redefinição foi enviado." });
       }
     } catch (err: any) {
-      setMsg({ type: "error", text: err.message ?? "Erro inesperado" });
+      setMsg({ type: "error", text: traduzErro(err) });
     } finally {
       setLoading(false);
     }
