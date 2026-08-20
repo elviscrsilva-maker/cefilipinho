@@ -243,14 +243,17 @@ function Home() {
           </div>
 
           <div className="mt-14 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {HIGHLIGHTS.map((hi) => (
-              <div key={hi.label} className="rounded-xl border border-primary-foreground/15 bg-primary-foreground/10 backdrop-blur px-5 py-4 flex items-center gap-3 text-primary-foreground">
-                <div className="h-10 w-10 rounded-lg bg-gold/90 grid place-items-center text-primary shrink-0">
-                  <hi.icon className="h-5 w-5" />
+            {(h.highlights ?? []).map((hi, idx) => {
+              const Icon = highlightIcon(hi.icon);
+              return (
+                <div key={`${hi.label}-${idx}`} className="rounded-xl border border-primary-foreground/15 bg-primary-foreground/10 backdrop-blur px-5 py-4 flex items-center gap-3 text-primary-foreground">
+                  <div className="h-10 w-10 rounded-lg bg-gold/90 grid place-items-center text-primary shrink-0">
+                    <Icon className="h-5 w-5" />
+                  </div>
+                  <span className="text-sm font-medium">{hi.label}</span>
                 </div>
-                <span className="text-sm font-medium">{hi.label}</span>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </section>
