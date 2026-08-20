@@ -424,6 +424,81 @@ function HomeEditor() {
           </Field>
         </div>
       </div>
+
+      <div className="rounded-lg border border-border p-4 space-y-4">
+        <div>
+          <div className="text-sm font-semibold text-primary">Cards de destaque</div>
+          <div className="text-xs text-muted-foreground">Os quadros com ícone exibidos abaixo do Hero.</div>
+        </div>
+        {(form.highlights ?? []).map((hi, idx) => {
+          const list = [...(form.highlights ?? [])];
+          return (
+            <div key={idx} className="grid gap-2 md:grid-cols-[10rem_1fr_auto] items-end">
+              <Field label="Ícone">
+                <select
+                  value={hi.icon}
+                  onChange={(e) => {
+                    list[idx] = { ...hi, icon: e.target.value };
+                    upd("highlights", list);
+                  }}
+                  className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
+                >
+                  {HIGHLIGHT_ICON_NAMES.map((n) => (
+                    <option key={n} value={n}>{n}</option>
+                  ))}
+                </select>
+              </Field>
+              <Field label="Texto">
+                <TextInput
+                  value={hi.label}
+                  onChange={(e) => {
+                    list[idx] = { ...hi, label: e.target.value };
+                    upd("highlights", list);
+                  }}
+                />
+              </Field>
+              <div className="flex gap-1 pb-1">
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (idx === 0) return;
+                    [list[idx - 1], list[idx]] = [list[idx], list[idx - 1]];
+                    upd("highlights", list);
+                  }}
+                  className="h-10 px-3 rounded-md border border-input text-sm"
+                >
+                  ↑
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (idx === list.length - 1) return;
+                    [list[idx + 1], list[idx]] = [list[idx], list[idx + 1]];
+                    upd("highlights", list);
+                  }}
+                  className="h-10 px-3 rounded-md border border-input text-sm"
+                >
+                  ↓
+                </button>
+                <button
+                  type="button"
+                  onClick={() => upd("highlights", list.filter((_, i) => i !== idx))}
+                  className="h-10 px-3 rounded-md border border-destructive text-destructive text-sm"
+                >
+                  Remover
+                </button>
+              </div>
+            </div>
+          );
+        })}
+        <button
+          type="button"
+          onClick={() => upd("highlights", [...(form.highlights ?? []), { icon: "Stethoscope", label: "Novo destaque" }])}
+          className="h-10 px-4 rounded-md border border-input text-sm"
+        >
+          + Adicionar card
+        </button>
+      </div>
       <SaveButton
         saving={saving}
         onClick={async () => {
