@@ -23,6 +23,29 @@ function AuthPage() {
     });
   }, [navigate]);
 
+  function traduzErro(err: any): string {
+    const raw = String(err?.message ?? "").toLowerCase();
+    if (raw.includes("already registered") || raw.includes("already been registered") || raw.includes("user already")) {
+      return "Este e-mail já possui conta criada. Use a opção “Entrar”. Se não lembra a senha, clique em “Esqueci minha senha”.";
+    }
+    if (raw.includes("invalid login credentials")) {
+      return "E-mail ou senha incorretos. Se este é seu primeiro acesso, use “Esqueci minha senha” para definir uma senha.";
+    }
+    if (raw.includes("email not confirmed")) {
+      return "E-mail ainda não confirmado. Verifique sua caixa de entrada (e o spam) e clique no link de confirmação.";
+    }
+    if (raw.includes("password") && raw.includes("6")) {
+      return "A senha deve ter no mínimo 6 caracteres.";
+    }
+    if (raw.includes("signups not allowed") || raw.includes("signup is disabled")) {
+      return "Criação de contas desativada. Use “Esqueci minha senha” para acessar sua conta já existente.";
+    }
+    if (raw.includes("rate limit") || raw.includes("too many")) {
+      return "Muitas tentativas em pouco tempo. Aguarde alguns minutos e tente novamente.";
+    }
+    return err?.message ?? "Erro inesperado";
+  }
+
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true);
