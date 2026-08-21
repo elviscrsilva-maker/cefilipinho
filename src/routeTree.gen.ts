@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SobreRouteImport } from './routes/sobre'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as ProjetosRouteImport } from './routes/projetos'
 import { Route as PodcastRouteImport } from './routes/podcast'
 import { Route as EspecialidadesRouteImport } from './routes/especialidades'
@@ -28,6 +29,11 @@ const SobreRoute = SobreRouteImport.update({
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
   path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ResetPasswordRoute = ResetPasswordRouteImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ProjetosRoute = ProjetosRouteImport.update({
@@ -77,6 +83,7 @@ export interface FileRoutesByFullPath {
   '/especialidades': typeof EspecialidadesRoute
   '/podcast': typeof PodcastRoute
   '/projetos': typeof ProjetosRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/sobre': typeof SobreRoute
   '/admin': typeof AuthenticatedAdminRoute
@@ -88,6 +95,7 @@ export interface FileRoutesByTo {
   '/especialidades': typeof EspecialidadesRoute
   '/podcast': typeof PodcastRoute
   '/projetos': typeof ProjetosRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/sobre': typeof SobreRoute
   '/admin': typeof AuthenticatedAdminRoute
@@ -101,6 +109,7 @@ export interface FileRoutesById {
   '/especialidades': typeof EspecialidadesRoute
   '/podcast': typeof PodcastRoute
   '/projetos': typeof ProjetosRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/sobre': typeof SobreRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
@@ -114,6 +123,7 @@ export interface FileRouteTypes {
     | '/especialidades'
     | '/podcast'
     | '/projetos'
+    | '/reset-password'
     | '/sitemap.xml'
     | '/sobre'
     | '/admin'
@@ -125,6 +135,7 @@ export interface FileRouteTypes {
     | '/especialidades'
     | '/podcast'
     | '/projetos'
+    | '/reset-password'
     | '/sitemap.xml'
     | '/sobre'
     | '/admin'
@@ -137,6 +148,7 @@ export interface FileRouteTypes {
     | '/especialidades'
     | '/podcast'
     | '/projetos'
+    | '/reset-password'
     | '/sitemap.xml'
     | '/sobre'
     | '/_authenticated/admin'
@@ -150,6 +162,7 @@ export interface RootRouteChildren {
   EspecialidadesRoute: typeof EspecialidadesRoute
   PodcastRoute: typeof PodcastRoute
   ProjetosRoute: typeof ProjetosRoute
+  ResetPasswordRoute: typeof ResetPasswordRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   SobreRoute: typeof SobreRoute
 }
@@ -168,6 +181,13 @@ declare module '@tanstack/react-router' {
       path: '/sitemap.xml'
       fullPath: '/sitemap.xml'
       preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/reset-password': {
+      id: '/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof ResetPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/projetos': {
@@ -248,6 +268,7 @@ const rootRouteChildren: RootRouteChildren = {
   EspecialidadesRoute: EspecialidadesRoute,
   PodcastRoute: PodcastRoute,
   ProjetosRoute: ProjetosRoute,
+  ResetPasswordRoute: ResetPasswordRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   SobreRoute: SobreRoute,
 }
