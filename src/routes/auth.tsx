@@ -6,6 +6,16 @@ import { Lock, Mail } from "lucide-react";
 
 export const Route = createFileRoute("/auth")({
   ssr: false,
+  head: () => ({
+    meta: [
+      { title: "Acesso administrativo — CE Filipinho" },
+      { name: "description", content: "Acesso restrito à administração do Centro de Especialidades Filipinho." },
+      { property: "og:title", content: "Acesso administrativo — CE Filipinho" },
+      { property: "og:description", content: "Acesso restrito à administração do Centro de Especialidades Filipinho." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
+    ],
+  }),
   component: AuthPage,
 });
 
@@ -42,6 +52,12 @@ function AuthPage() {
     }
     if (raw.includes("rate limit") || raw.includes("too many")) {
       return "Muitas tentativas em pouco tempo. Aguarde alguns minutos e tente novamente.";
+    }
+    if (raw.includes("for security purposes") || raw.includes("only request this after")) {
+      const seconds = raw.match(/after\s+(\d+)\s+seconds?/)?.[1];
+      return seconds
+        ? `Por segurança, aguarde ${seconds} segundos antes de solicitar outro link.`
+        : "Por segurança, aguarde cerca de um minuto antes de solicitar outro link.";
     }
     return err?.message ?? "Erro inesperado";
   }
