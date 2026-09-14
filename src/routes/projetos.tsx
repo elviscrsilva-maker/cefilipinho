@@ -1,7 +1,15 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { SiteLayout } from "@/components/SiteLayout";
-import { FolderKanban, ExternalLink } from "lucide-react";
-import { useProjects } from "@/lib/content";
+import { FolderKanban, ExternalLink, Maximize2 } from "lucide-react";
+import { useState } from "react";
+import { useProjects, type Project } from "@/lib/content";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 const TITLE = "Projetos e Instrumento de Gestão — Centro de Especialidades Filipinho";
 const DESC =
@@ -23,6 +31,7 @@ export const Route = createFileRoute("/projetos")({
 
 function Projetos() {
   const { data: items = [] } = useProjects();
+  const [selectedProject, setSelectedProject] = useState<Project | null>(null);
 
   return (
     <SiteLayout>
@@ -33,8 +42,8 @@ function Projetos() {
             Projetos e Instrumento de Gestão
           </h1>
           <p className="mt-4 max-w-2xl text-primary-foreground/85 text-lg">
-            Conheça os projetos e instrumentos de gestão desenvolvidos pela unidade. Clique em uma
-            capa para acessar o projeto completo.
+            Conheça os projetos e instrumentos de gestão desenvolvidos pela unidade. Clique na capa
+            para ampliar a imagem ou use o link para acessar o projeto completo.
           </p>
         </div>
       </section>
@@ -45,9 +54,18 @@ function Projetos() {
         ) : (
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {items.map((p) => {
-              const CardInner = (
-                <>
-                  <div className="aspect-[4/3] bg-secondary relative overflow-hidden">
+              return (
+                <article
+                  key={p.id}
+                  className="group text-left rounded-2xl overflow-hidden border border-border bg-card shadow-card hover:shadow-elegant hover:-translate-y-0.5 transition"
+                >
+                  <button
+                    type="button"
+                    onClick={() => p.cover_url && setSelectedProject(p)}
+                    disabled={!p.cover_url}
+                    className="aspect-[4/3] w-full bg-secondary relative overflow-hidden disabled:cursor-default"
+                    aria-label={p.cover_url ? `Ampliar capa de ${p.title}` : undefined}
+                  >
                     {p.cover_url ? (
                       <img
                         src={p.cover_url}
@@ -59,12 +77,12 @@ function Projetos() {
                         <FolderKanban className="h-12 w-12" />
                       </div>
                     )}
-                    {p.link_url && (
-                      <div className="absolute top-3 right-3 rounded-full bg-black/60 text-white text-xs px-2.5 py-1 inline-flex items-center gap-1">
-                        <ExternalLink className="h-3.5 w-3.5" /> Abrir
+                    {p.cover_url && (
+                      <div className="absolute top-3 right-3 rounded-full bg-background/85 text-foreground p-2 shadow">
+                        <Maximize2 className="h-4 w-4" />
                       </div>
                     )}
-                  </div>
+                  </button>
                   <div className="p-5">
                     <h3 className="font-display text-lg text-primary font-semibold">{p.title}</h3>
                     {p.description && (
@@ -72,33 +90,45 @@ function Projetos() {
                         {p.description}
                       </p>
                     )}
+                    {p.link_url && (
+                      <Button asChild className="mt-4">
+                        <a href={p.link_url} target="_blank" rel="noreferrer">
+                          <ExternalLink /> Acessar projeto
+                        </a>
+                      </Button>
+                    )}
                   </div>
-                </>
-              );
-
-              const className =
-                "group text-left rounded-2xl overflow-hidden border border-border bg-card shadow-card hover:shadow-elegant hover:-translate-y-0.5 transition block";
-
-              return p.link_url ? (
-                <a
-                  key={p.id}
-                  href={p.link_url}
-                  target="_blank"
-                  rel="noreferrer"
-                  className={className}
-                  aria-label={`Abrir projeto ${p.title}`}
-                >
-                  {CardInner}
-                </a>
-              ) : (
-                <div key={p.id} className={className}>
-                  {CardInner}
-                </div>
+                </article>
               );
             })}
           </div>
         )}
       </section>
+
+      <Dialog open={Boolean(selectedProject)} onOpenChange={(open) => !open && setSelectedProject(null)}>
+        <DialogContent className="max-w-5xl border-border bg-card p-3 sm:p-4">
+          <DialogTitle className="pr-8 font-display text-primary">
+            {selectedProject?.title}
+          </DialogTitle>
+          <DialogDescription className="sr-only">
+            Imagem ampliada da capa do projeto
+          </DialogDescription>
+          {selectedProject?.cover_url && (
+            <img
+              src={selectedProject.cover_url}
+              alt={`Capa ampliada de ${selectedProject.title}`}
+              className="max-h-[78vh] w-full object-contain"
+            />
+          )}
+          {selectedProject?.link_url && (
+            <Button asChild className="justify-self-center">
+              <a href={selectedProject.link_url} target="_blank" rel="noreferrer">
+                <ExternalLink /> Acessar projeto completo
+              </a>
+            </Button>
+          )}
+        </DialogContent>
+      </Dialog>
     </SiteLayout>
   );
 }
