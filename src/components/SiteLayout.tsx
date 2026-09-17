@@ -10,6 +10,9 @@ import heroAsset from "@/assets/fachada-filipinho.jpg.asset.json";
 function AppearanceInjector() {
   const { data } = useAppearanceContent();
   const a = data!;
+  const googleFontsUrl = a.google_fonts_url?.startsWith("https://fonts.googleapis.com/css")
+    ? a.google_fonts_url
+    : "";
   const css = `
     ${a.primary_color ? `--primary: ${a.primary_color};` : ""}
     ${a.primary_glow_color ? `--primary-glow: ${a.primary_glow_color};` : ""}
@@ -19,7 +22,7 @@ function AppearanceInjector() {
   `.trim();
   return (
     <>
-      {a.google_fonts_url && <link rel="stylesheet" href={a.google_fonts_url} />}
+      {googleFontsUrl && <link rel="stylesheet" href={googleFontsUrl} />}
       {css && <style>{`:root{${css}}`}</style>}
     </>
   );
@@ -68,7 +71,16 @@ export function SiteLayout({ children }: { children: ReactNode }) {
 
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 h-20 md:h-24 flex items-center justify-between gap-4">
           <Link to="/" className="flex items-center gap-3 group shrink-0">
-            <img src={logoUrl} alt={b.site_title} className="h-14 sm:h-16 md:h-20 w-auto drop-shadow-sm" />
+            <img
+              src={logoUrl}
+              alt={b.site_title}
+              className="h-14 sm:h-16 md:h-20 w-auto drop-shadow-sm"
+              fetchPriority="high"
+              onError={(event) => {
+                if (event.currentTarget.src.endsWith(logoFilipinhoAsset.url)) return;
+                event.currentTarget.src = logoFilipinhoAsset.url;
+              }}
+            />
           </Link>
           <nav className="hidden lg:flex items-center gap-1">
             {NAV.map((n) => (
@@ -208,7 +220,16 @@ export function SiteLayout({ children }: { children: ReactNode }) {
               aria-label="Desenvolvido por Elvis C. R. Silva"
             >
               <span className="text-[11px] uppercase tracking-widest">Desenvolvido por</span>
-              <img src={devLogoUrl} alt="Elvis C. R. Silva" className="h-14 w-auto rounded-md bg-primary-foreground/5 p-1" />
+              <img
+                src={devLogoUrl}
+                alt="Elvis C. R. Silva"
+                className="h-14 w-auto rounded-md bg-primary-foreground/5 p-1"
+                loading="lazy"
+                onError={(event) => {
+                  if (event.currentTarget.src.endsWith(logoElvisAsset.url)) return;
+                  event.currentTarget.src = logoElvisAsset.url;
+                }}
+              />
             </a>
           </div>
         </div>
