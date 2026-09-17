@@ -269,10 +269,13 @@ export const DEFAULTS = {
 
 };
 
-const STORAGE_URL_RE = /\/storage\/v1\/object\/(?:public|sign)\/([^/]+)\/([^?]+)/;
+const STORAGE_URL_RE = /\/storage\/v1\/object\/sign\/([^/]+)\/([^?]+)/;
 
 export async function resolveStorageUrl(url: string | null | undefined): Promise<string> {
   if (!url) return url ?? "";
+  // Public storage URLs are already permanent. Returning them directly avoids
+  // an unnecessary signing request for every image on every page load.
+  if (url.includes("/storage/v1/object/public/")) return url;
   const m = url.match(STORAGE_URL_RE);
   if (!m) return url;
   try {
