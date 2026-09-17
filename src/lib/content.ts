@@ -269,19 +269,18 @@ export const DEFAULTS = {
 
 };
 
-const STORAGE_URL_RE = /\/storage\/v1\/object\/sign\/([^/]+)\/([^?]+)/;
+const STORAGE_URL_RE = /\/storage\/v1\/object\/(?:public|sign)\/([^/]+)\/([^?]+)/;
 
 export async function resolveStorageUrl(url: string | null | undefined): Promise<string> {
   if (!url) return url ?? "";
-  // Public storage URLs are already permanent. Returning them directly avoids
-  // an unnecessary signing request for every image on every page load.
-  if (url.includes("/storage/v1/object/public/")) return url;
   const m = url.match(STORAGE_URL_RE);
   if (!m) return url;
   try {
     const bucket = m[1];
     const path = decodeURIComponent(m[2]);
-    const { data } = await supabase.storage.from(bucket).createSignedUrl(path, 60 * 60 * 24 * 365 * 100);
+    // The stored file remains permanent; this temporary access address is
+    // renewed automatically whenever the site content is loaded.
+    const { data } = await supabase.storage.from(bucket).createSignedUrl(path, 60 * 60 * 24);
     return data?.signedUrl ?? url;
   } catch {
     return url;
