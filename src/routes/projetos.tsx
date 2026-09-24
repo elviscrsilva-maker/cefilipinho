@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { SiteLayout } from "@/components/SiteLayout";
 import { FolderKanban, ExternalLink, Maximize2 } from "lucide-react";
 import { useState } from "react";
-import { useProjects, type Project } from "@/lib/content";
+import { useAdminPanelLabels, useProjects, type Project } from "@/lib/content";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -31,6 +31,7 @@ export const Route = createFileRoute("/projetos")({
 
 function Projetos() {
   const { data: items = [] } = useProjects();
+  const { data: panelLabels } = useAdminPanelLabels();
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
 
   return (
@@ -39,7 +40,7 @@ function Projetos() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-20">
           <div className="text-xs uppercase tracking-widest text-gold">Institucional</div>
           <h1 className="mt-3 font-display text-4xl md:text-5xl font-semibold">
-            Projetos e Instrumento de Gestão
+            {panelLabels.projetos}
           </h1>
           <p className="mt-4 max-w-2xl text-primary-foreground/85 text-lg">
             Conheça os projetos e instrumentos de gestão desenvolvidos pela unidade. Clique na capa
