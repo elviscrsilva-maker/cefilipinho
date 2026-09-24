@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
@@ -11,6 +11,7 @@ import {
   type BrandingContent,
   type AppearanceContent,
   type HeaderContent,
+  type AdminPanelLabels,
   type MediaItem,
   type PodcastEpisode,
   type Specialty,
@@ -66,28 +67,36 @@ type Tab =
   | "aparencia"
   | "projetos"
   | "podcast"
+  | "rotulos"
   | "conta";
 
-const TABS: { id: Tab; label: string; icon: typeof Home }[] = [
-  { id: "home", label: "Página Inicial", icon: Home },
-  { id: "cabecalho", label: "Cabeçalho / Menu", icon: Palette },
-  { id: "eventos", label: "Eventos & Notícias", icon: Calendar },
-  { id: "institucional", label: "Institucional", icon: Building2 },
-  { id: "equipe", label: "Direção & Coordenação", icon: Users },
-  { id: "contato", label: "Contato", icon: Phone },
-  { id: "branding", label: "Marca e Rodapé", icon: Palette },
-  { id: "especialidades", label: "Especialidades e Exames", icon: Stethoscope },
-  { id: "profissionais", label: "Profissionais por Especialidade", icon: Users },
-  { id: "aparencia", label: "Aparência (cores/fontes)", icon: Palette },
-  { id: "projetos", label: "Projetos e Instrumento de Gestão", icon: FolderOpen },
-  { id: "podcast", label: "Podcast", icon: Mic },
-  { id: "conta", label: "Minha Conta", icon: KeyRound },
+const TABS: { id: Tab; labelKey?: keyof AdminPanelLabels; label?: string; icon: typeof Home }[] = [
+  { id: "home", labelKey: "home", icon: Home },
+  { id: "cabecalho", labelKey: "cabecalho", icon: Palette },
+  { id: "eventos", labelKey: "eventos", icon: Calendar },
+  { id: "institucional", labelKey: "institucional", icon: Building2 },
+  { id: "equipe", labelKey: "equipe", icon: Users },
+  { id: "contato", labelKey: "contato", icon: Phone },
+  { id: "branding", labelKey: "branding", icon: Palette },
+  { id: "especialidades", labelKey: "especialidades", icon: Stethoscope },
+  { id: "profissionais", labelKey: "profissionais", icon: Users },
+  { id: "aparencia", labelKey: "aparencia", icon: Palette },
+  { id: "projetos", labelKey: "projetos", icon: FolderOpen },
+  { id: "podcast", labelKey: "podcast", icon: Mic },
+  { id: "rotulos", label: "Nomes do painel", icon: Palette },
+  { id: "conta", labelKey: "conta", icon: KeyRound },
 ];
+
+const AdminLabelsContext = createContext<AdminPanelLabels>(DEFAULTS.admin_panel_labels);
 
 function AdminPage() {
   const navigate = useNavigate();
   const { user, loading, isAdmin } = useAuth();
   const [tab, setTab] = useState<Tab>("home");
+  const { data: panelLabels } = useContentSection<AdminPanelLabels>(
+    "admin_panel_labels",
+    DEFAULTS.admin_panel_labels,
+  );
 
   useEffect(() => {
     if (!loading && !user) navigate({ to: "/auth" });
@@ -129,6 +138,7 @@ function AdminPage() {
   }
 
   return (
+    <AdminLabelsContext.Provider value={panelLabels}>
     <div className="min-h-screen bg-secondary/30">
       <header className="bg-primary text-primary-foreground">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 py-4 flex items-center justify-between">
@@ -169,7 +179,7 @@ function AdminPage() {
                     : "text-foreground hover:bg-secondary"
                 }`}
               >
-                <Icon className="h-4 w-4" /> {t.label}
+                <Icon className="h-4 w-4" /> {t.labelKey ? panelLabels[t.labelKey] : t.label}
               </button>
             );
           })}
@@ -188,21 +198,76 @@ function AdminPage() {
           {tab === "aparencia" && <AppearanceEditor />}
           {tab === "projetos" && <ProjectsEditor />}
           {tab === "podcast" && <PodcastEditor />}
+          {tab === "rotulos" && <AdminLabelsEditor />}
           {tab === "conta" && <AccountEditor />}
         </main>
       </div>
     </div>
+    </AdminLabelsContext.Provider>
   );
 }
 
 /* ---------- shared UI ---------- */
 function Card({ title, description, children }: { title: string; description?: string; children: React.ReactNode }) {
+  const labels = useContext(AdminLabelsContext);
+  const editableTitles: Partial<Record<string, keyof AdminPanelLabels>> = {
+    "Página inicial": "home",
+    "Cabeçalho / Menu": "cabecalho",
+    "Eventos & Notícias": "eventos",
+    "Institucional": "institucional",
+    "Direção & Coordenação": "equipe",
+    "Contato": "contato",
+    "Marca e Rodapé": "branding",
+    "Especialidades e Exames": "especialidades",
+    "Profissionais por Especialidade": "profissionais",
+    "Aparência": "aparencia",
+    "Projetos e Instrumento de Gestão": "projetos",
+    "Podcast": "podcast",
+    "Minha conta": "conta",
+  };
+  const labelKey = editableTitles[title];
   return (
     <section className="rounded-xl border border-border bg-card p-6 shadow-card">
-      <h2 className="font-display text-xl text-primary font-semibold">{title}</h2>
+      <h2 className="font-display text-xl text-primary font-semibold">{labelKey ? labels[labelKey] : title}</h2>
       {description && <p className="mt-1 text-sm text-muted-foreground">{description}</p>}
       <div className="mt-5 space-y-4">{children}</div>
     </section>
+  );
+}
+
+function AdminLabelsEditor() {
+  const { data, save } = useContentSection<AdminPanelLabels>("admin_panel_labels", DEFAULTS.admin_panel_labels);
+  const [form, setForm] = useState<AdminPanelLabels>(data);
+  const [saving, setSaving] = useState(false);
+  const [toast, setToast] = useState<string | null>(null);
+  useEffect(() => setForm(data), [data]);
+
+  const saveChanges = async () => {
+    setSaving(true);
+    try {
+      await save(form);
+      setToast("Nomes do painel atualizados.");
+      window.setTimeout(() => setToast(null), 2500);
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  return (
+    <Card title="Nomes do painel" description="Altere somente os nomes exibidos nas abas e nos títulos do painel administrativo.">
+      <div className="grid gap-4 md:grid-cols-2">
+        {(Object.keys(DEFAULTS.admin_panel_labels) as (keyof AdminPanelLabels)[]).map((key) => (
+          <Field key={key} label={DEFAULTS.admin_panel_labels[key]}>
+            <TextInput
+              value={form[key]}
+              onChange={(event) => setForm({ ...form, [key]: event.target.value })}
+            />
+          </Field>
+        ))}
+      </div>
+      <SaveButton saving={saving} onClick={saveChanges} />
+      <Toast text={toast} />
+    </Card>
   );
 }
 function Field({ label, hint, children }: { label: string; hint?: string; children: React.ReactNode }) {

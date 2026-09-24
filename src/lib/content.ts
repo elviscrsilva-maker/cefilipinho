@@ -84,6 +84,22 @@ export type HeaderContent = {
   nav_active_bg_color: string;
 };
 
+export type AdminPanelLabels = {
+  home: string;
+  cabecalho: string;
+  eventos: string;
+  institucional: string;
+  equipe: string;
+  contato: string;
+  branding: string;
+  especialidades: string;
+  profissionais: string;
+  aparencia: string;
+  projetos: string;
+  podcast: string;
+  conta: string;
+};
+
 
 
 export type MediaItem = {
@@ -265,6 +281,21 @@ export const DEFAULTS = {
     nav_active_text_color: "",
     nav_active_bg_color: "",
   } as HeaderContent,
+  admin_panel_labels: {
+    home: "Página Inicial",
+    cabecalho: "Cabeçalho / Menu",
+    eventos: "Eventos & Notícias",
+    institucional: "Institucional",
+    equipe: "Direção & Coordenação",
+    contato: "Contato",
+    branding: "Marca e Rodapé",
+    especialidades: "Especialidades e Exames",
+    profissionais: "Profissionais por Especialidade",
+    aparencia: "Aparência (cores/fontes)",
+    projetos: "Projetos e Instrumento de Gestão",
+    podcast: "Podcast",
+    conta: "Minha Conta",
+  } as AdminPanelLabels,
 
 
 };
