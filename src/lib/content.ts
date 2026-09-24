@@ -386,6 +386,14 @@ export function useHeaderContent() {
   });
 }
 
+export function useAdminPanelLabels() {
+  return useQuery({
+    queryKey: ["content", "admin_panel_labels"],
+    queryFn: () => fetchContent("admin_panel_labels", DEFAULTS.admin_panel_labels),
+    initialData: DEFAULTS.admin_panel_labels,
+  });
+}
+
 export function useMediaItems() {
   return useQuery({
     queryKey: ["media_items"],
